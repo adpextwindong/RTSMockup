@@ -21,6 +21,12 @@ void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){
 }
 
 void updateSelection(){//TODO FINISH THIS FUNCTION
+	sf::Vector2i LimitedMousePos = sf::Mouse::getPosition(window);
+	if(LimitedMousePos.x<0 || LimitedMousePos.x > window.getSize().x){//if 
+
+	}else{
+
+	}
 	int xDiff=(sf::Mouse::getPosition(window).x-originalPoint.x);
 	int yDiff=(sf::Mouse::getPosition(window).y-originalPoint.y);
 	if(xDiff<=0){// +x
@@ -166,11 +172,12 @@ int _tmain(int argc, _TCHAR* argv[])
 						}
 					}
 					leftMouseClickedLastCycle^=true;//Swaps leftMouseClickLastCycle state
-				}else if(sf::Mouse::isButtonPressed(sf::Mouse::Left)==true &&leftMouseClickedLastCycle==true && mouseCommandState==Selecting){//If the player is still holding down the left click button while selecting
-					updateSelection();
 				}else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){//If Right mbutton clicked
 					CommandSelectionUnits(Move,&playerSelection);
 				}
+		}
+		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)==true &&leftMouseClickedLastCycle==true && mouseCommandState==Selecting){//If the player is still holding down the left click button while selecting
+					updateSelection();
 		}
         window.clear();
 		window.draw(selectionShape);
