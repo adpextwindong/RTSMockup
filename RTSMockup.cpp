@@ -13,7 +13,7 @@ sf::RectangleShape selectionShape;
 sf::Vector2i originalPoint;//SELECT LEFT CLICK POINT
 sf::RenderWindow window(sf::VideoMode(1024, 768), "RTS Mockup");
 
-void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){
+void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//draws all the units in a unit list
 	for(unsigned int i=0;i<list.size();i++){
 		(*window).draw(list[i].UnitShape);
 	}
@@ -23,32 +23,41 @@ void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){
 void updateSelection(){//TODO FINISH THIS FUNCTION
 	sf::Vector2i LimitedMousePos = sf::Mouse::getPosition(window);
 	if(LimitedMousePos.x<0 || LimitedMousePos.x > window.getSize().x){//if 
-
-	}else{
-
+		if(LimitedMousePos.x<0){
+			LimitedMousePos.x=0;
+		}else{
+			LimitedMousePos.x=window.getSize().x;
+		}
 	}
-	int xDiff=(sf::Mouse::getPosition(window).x-originalPoint.x);
-	int yDiff=(sf::Mouse::getPosition(window).y-originalPoint.y);
+	if(LimitedMousePos.y<0 || LimitedMousePos.y > window.getSize().y){//if 
+		if(LimitedMousePos.y<0){
+			LimitedMousePos.y=0;
+		}else{
+			LimitedMousePos.y=window.getSize().y;
+		}
+	}
+	int xDiff=(LimitedMousePos.x-originalPoint.x);
+	int yDiff=(LimitedMousePos.y-originalPoint.y);
 	if(xDiff<=0){// +x
 		if(yDiff<=0){//+x +y Quad 1
-			selectionShape.setPosition(originalPoint.x,sf::Mouse::getPosition(window).y);
-			xDiff=sf::Mouse::getPosition(window).x-originalPoint.x;
-			yDiff=originalPoint.y-sf::Mouse::getPosition(window).y;
-			selectionShape.setSize(sf::Vector2f(xDiff,yDiff));
+			selectionShape.setPosition(originalPoint.x,LimitedMousePos.y);
+			selectionShape.setSize(sf::Vector2f(LimitedMousePos.x-originalPoint.x,originalPoint.y-LimitedMousePos.y));
 		}else{//+x -y Quad 4
-			selectionShape.setSize(sf::Vector2f(sf::Mouse::getPosition(window).x-originalPoint.x,sf::Mouse::getPosition(window).y-originalPoint.y));
+			selectionShape.setSize(sf::Vector2f(LimitedMousePos.x-originalPoint.x,LimitedMousePos.y-originalPoint.y));
 		}
 	}else{
 		if(yDiff<=0){// -x +y Quad 2
-			selectionShape.setPosition(sf::Vector2f(sf::Mouse::getPosition(window)));
-			selectionShape.setSize(sf::Vector2f(originalPoint.x-sf::Mouse::getPosition(window).x,originalPoint.y-sf::Mouse::getPosition(window).y));
+			selectionShape.setPosition(sf::Vector2f(LimitedMousePos));
+			selectionShape.setSize(sf::Vector2f(originalPoint.x-LimitedMousePos.x,originalPoint.y-LimitedMousePos.y));
 		}else{// -x -y Quad 3
-			selectionShape.setPosition(sf::Vector2f(sf::Mouse::getPosition(window).x,originalPoint.y));
-			selectionShape.setSize(sf::Vector2f(originalPoint.x-sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y-originalPoint.y));
+			selectionShape.setPosition(sf::Vector2f(LimitedMousePos.x,originalPoint.y));
+			selectionShape.setSize(sf::Vector2f(originalPoint.x-LimitedMousePos.x,LimitedMousePos.y-originalPoint.y));
 		}
 	}
-	printf("Original Point %d %d",originalPoint.x,originalPoint.y);
-	printf("Selection Cords %d %d\n",selectionShape.getPosition().x,selectionShape.getPosition().y);
+	printf("Limited MosPos %d %d ",LimitedMousePos.x,LimitedMousePos.y);
+	printf("Real MosPos %d %d\n",sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y);
+	/*printf("Original Point %d %d ",originalPoint.x,originalPoint.y);
+	printf("Selection Cords %f.0 %f.0\n\n",selectionShape.getPosition().x,selectionShape.getPosition().y);*/
 }
 
 char * commandString(CommandEnum theCommand){
@@ -63,7 +72,8 @@ char * commandString(CommandEnum theCommand){
 		return "Stop";
 	}
 }
-Unit * unitAtMousePos(){//check for target unit at mouse posisiton
+Unit * unitAtMousePos(){//TODO: FINISH THIS FUNCTION
+	//check for target unit at mouse posisiton
 	return NULL;
 }
 void CommandSelectionUnits(CommandEnum theCommand, std::vector<Unit *> * playerSelection){
@@ -79,8 +89,8 @@ void CommandSelectionUnits(CommandEnum theCommand, std::vector<Unit *> * playerS
 
 
 bool mouseIsOnScreen(){
-	if((sf::Mouse::getPosition().x-window.getPosition().x >-500) && (sf::Mouse::getPosition().x-window.getPosition().x <=window.getSize().x)){
-			if((sf::Mouse::getPosition().y-window.getPosition().y >-500) && (sf::Mouse::getPosition().y-window.getPosition().y <=window.getSize().y)){
+	if((sf::Mouse::getPosition().x-window.getPosition().x >0) && (sf::Mouse::getPosition().x-window.getPosition().x <=window.getSize().x)){
+			if((sf::Mouse::getPosition().y-window.getPosition().y >0) && (sf::Mouse::getPosition().y-window.getPosition().y <=window.getSize().y)){
 				return true;
 			}
 	}
