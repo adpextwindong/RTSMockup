@@ -8,6 +8,7 @@ class Unit
 		double speed;
 		double HP;
 		double size;
+		bool selected;
 		Point2D posistion;
 		sf::Color Color;
 		sf::CircleShape UnitShape;

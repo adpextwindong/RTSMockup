@@ -7,6 +7,7 @@ Unit::Unit(Point2D _Posistion,sf::Color _color,double _size){
 		//Makes circle center the Posistion
 	Color=_color;
 	size=_size;
+	selected = false;
 	UnitShape= sf::CircleShape(size);
 	UnitShape.setPosition(posistion.x,posistion.y);
 	UnitShape.setFillColor(Color);

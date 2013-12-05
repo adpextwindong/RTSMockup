@@ -52,9 +52,10 @@ void updateSelection(){
 			selectionShape.setSize(sf::Vector2f(originalPoint.x-LimitedMousePos.x,LimitedMousePos.y-originalPoint.y));
 		}
 	}
+
 	printf("Shape Pos:%f %f\n",selectionShape.getPosition().x,selectionShape.getPosition().y);
 	for(int i=0;i<4;i++){
-		printf("P %d: %.0f %.0f ",i,selectionShape.getPoint(i).x+selectionShape.getPosition().x,selectionShape.getPoint(i).y+selectionShape.getPosition().y);
+		printf("P(%d): %.0f,%.0f ",i,selectionShape.getPoint(i).x+selectionShape.getPosition().x,selectionShape.getPoint(i).y+selectionShape.getPosition().y);
 	}
 	printf("\n\n");
 	//printf("Limited MosPos %d %d ",LimitedMousePos.x,LimitedMousePos.y);
@@ -62,7 +63,32 @@ void updateSelection(){
 	/*printf("Original Point %d %d ",originalPoint.x,originalPoint.y);
 	printf("Selection Cords %f.0 %f.0\n\n",selectionShape.getPosition().x,selectionShape.getPosition().y);*/
 }
+void grabOnScreenSelectedUnits(std::vector<Unit>* playerUnits,std::vector<Unit *>* playerSelection){
+	if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)&&!sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
+		printf("UnShifted %S Command","Selection");
+		(*playerSelection).empty();
+	}else{
+		printf("Shifted %S Command","Selection");
+	}
 
+	float minX=0.f;
+	float minY=0.f;
+	float maxX=0.f;
+	float maxY=0.f;
+	for(int i=0;i<4;i++){
+		minX = minX < selectionShape.getPoint(i).x ? selectionShape.getPoint(i).x : minX;
+		maxX = maxX > selectionShape.getPoint(i).x ? selectionShape.getPoint(i).x : maxX;
+		minY = minY < selectionShape.getPoint(i).y ? selectionShape.getPoint(i).y : minY;
+		maxY = maxY > selectionShape.getPoint(i).y ? selectionShape.getPoint(i).y : maxY;
+	}
+	for(unsigned int i=0;i<(*playerUnits).size();i++){
+		if((*playerUnits)[i].posistion.x-(*playerUnits)[i].UnitShape.getRadius() >= minX || (*playerUnits)[i].posistion.x+(*playerUnits)[i].UnitShape.getRadius() <= maxX){
+			if((*playerUnits)[i].posistion.y-(*playerUnits)[i].UnitShape.getRadius() >= minY || (*playerUnits)[i].posistion.y+(*playerUnits)[i].UnitShape.getRadius() <= maxY){
+				(*playerSelection).push_back(&(*playerUnits)[i]);
+			}
+		}
+	}
+}
 char * commandString(CommandEnum theCommand){
 	switch(theCommand){
 	case Attack:
@@ -101,12 +127,11 @@ bool mouseIsOnScreen(){
 	}
 	return false;
 }
-//void pushBackSelection(std::vector<Unit *>* playerSelection,std::vector<Unit>* playerUnits){//for control groups
+//void pushBackSelectionToControlGroup(std::vector<Unit *>* playerSelection,std::vector<Unit>* playerUnits){//for control groups
 //	for(unsigned int i=0;i<(*playerUnits).size();i++){
 //		if((*playerUnits)[i].posistion.x-(*playerUnits)[i].UnitShape.getRadius()>=
 //	}
 //		
-//	selectionShape.
 //}
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -130,19 +155,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Same with Unit Selection
 
 	DecisionState mouseCommandState = Selecting;//True if valid command key is pressed.
-	bool leftMouseClickedLastCycle = false;//For box selection
 	CommandEnum currentCommand;
-
+	bool leftMouseClickedLastCycle = false;//For box selection
 	
-
-	selectionShape.getPoint(0);
 
 	selectionShape.setFillColor(sf::Color::Transparent);
 	selectionShape.setOutlineThickness(3.0f);
 	selectionShape.setOutlineColor(sf::Color::White);
-	//selectionShape.setFillColor(sf::Color::White);
-	selectionShape.setPosition(500.f,600.f);
-	selectionShape.setSize(sf::Vector2f(30.f,30.f));
+	selectionShape.setSize(sf::Vector2f(0.f,0.f));
 
 	bool selectionDrawState = false; //user is selecting if true
 
