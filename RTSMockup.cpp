@@ -6,8 +6,12 @@
 #include "Unit.h"//Unit Object Class
 #include "Command.h"//Unit Commands
 
-enum DecisionState {Selecting,Commanding};
+#define PLAYER_COLOR Color::Green
+#define SELECTION_STROKE_COLOR sf::Color::Blue
+#define STROKE_SIZE 3
 
+enum DecisionState {Selecting,Commanding};
+ 
 sf::RectangleShape selectionShape;
 sf::Vector2i originalPoint;//SELECT LEFT CLICK POINT
 sf::RenderWindow window(sf::VideoMode(1024, 768), "RTS Mockup");
@@ -64,27 +68,47 @@ void updateSelection(){
 	printf("Selection Cords %f.0 %f.0\n\n",selectionShape.getPosition().x,selectionShape.getPosition().y);*/
 }
 void grabOnScreenSelectedUnits(std::vector<Unit>* playerUnits,std::vector<Unit *>* playerSelection){
+	bool shifted = false;
+	unsigned int preExistingElemCount=0;
 	if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)&&!sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
 		printf("UnShifted %S Command","Selection");
-		(*playerSelection).empty();
+		(*playerSelection).clear();
+		//printf("\nList cleared\n");
 	}else{
 		printf("Shifted %S Command","Selection");
+		shifted=true;
+		preExistingElemCount=(*playerSelection).size();
 	}
-
-	float minX=0.f;
-	float minY=0.f;
+	float minX=selectionShape.getPoint(0).x+selectionShape.getPosition().x;
 	float maxX=0.f;
+	float minY=selectionShape.getPoint(0).y+selectionShape.getPosition().y;
 	float maxY=0.f;
 	for(int i=0;i<4;i++){
-		minX = minX < selectionShape.getPoint(i).x ? selectionShape.getPoint(i).x : minX;
-		maxX = maxX > selectionShape.getPoint(i).x ? selectionShape.getPoint(i).x : maxX;
-		minY = minY < selectionShape.getPoint(i).y ? selectionShape.getPoint(i).y : minY;
-		maxY = maxY > selectionShape.getPoint(i).y ? selectionShape.getPoint(i).y : maxY;
+		minX = minX > selectionShape.getPoint(i).x+selectionShape.getPosition().x ? selectionShape.getPoint(i).x+selectionShape.getPosition().x : minX;
+		maxX = maxX < selectionShape.getPoint(i).x+selectionShape.getPosition().x ? selectionShape.getPoint(i).x+selectionShape.getPosition().x : maxX;
+		minY = minY > selectionShape.getPoint(i).y+selectionShape.getPosition().y ? selectionShape.getPoint(i).y+selectionShape.getPosition().y : minY;
+		maxY = maxY < selectionShape.getPoint(i).y+selectionShape.getPosition().y ? selectionShape.getPoint(i).y+selectionShape.getPosition().y : maxY;
 	}
+	float radius=0.f;
 	for(unsigned int i=0;i<(*playerUnits).size();i++){
-		if((*playerUnits)[i].posistion.x-(*playerUnits)[i].UnitShape.getRadius() >= minX || (*playerUnits)[i].posistion.x+(*playerUnits)[i].UnitShape.getRadius() <= maxX){
-			if((*playerUnits)[i].posistion.y-(*playerUnits)[i].UnitShape.getRadius() >= minY || (*playerUnits)[i].posistion.y+(*playerUnits)[i].UnitShape.getRadius() <= maxY){
-				(*playerSelection).push_back(&(*playerUnits)[i]);
+		Unit * currentPointer=NULL;
+		bool containsThePointer = false;
+		if(shifted==true){//Checks vector if it contains pointer, allows for no duplicates
+			currentPointer =&(*playerUnits)[i];
+			for(unsigned int j=0;j<preExistingElemCount;j++){
+				if(currentPointer==(*playerSelection)[j]){
+					containsThePointer=true;
+					break;
+				}
+			}
+		}
+		if(containsThePointer==false){//adds the pointer to the list if its in the selection box
+			radius=(*playerUnits)[i].UnitShape.getRadius();
+			sf::Vector2f position((*playerUnits)[i].position.x,(*playerUnits)[i].position.y);
+			if(position.x-radius >= minX && position.x+radius <= maxX){
+				if(position.y-radius >= minY && position.y+radius <= maxY){
+					(*playerSelection).push_back(&(*playerUnits)[i]);
+				}
 			}
 		}
 	}
@@ -127,9 +151,19 @@ bool mouseIsOnScreen(){
 	}
 	return false;
 }
+void drawSelectionStroke(std::vector<Unit*>* playerSelection){
+	sf::CircleShape strokeShape(0.f);
+	strokeShape.setFillColor(SELECTION_STROKE_COLOR);
+	//printf(" %d\n",(*playerSelection).size());
+	for(unsigned int i=0;i<(*playerSelection).size();i++){
+		strokeShape.setRadius((*(*playerSelection)[i]).UnitShape.getRadius()+STROKE_SIZE);
+		strokeShape.setPosition((*(*playerSelection)[i]).UnitShape.getPosition().x-STROKE_SIZE,(*(*playerSelection)[i]).UnitShape.getPosition().y-STROKE_SIZE);
+		window.draw(strokeShape);
+	}
+}
 //void pushBackSelectionToControlGroup(std::vector<Unit *>* playerSelection,std::vector<Unit>* playerUnits){//for control groups
 //	for(unsigned int i=0;i<(*playerUnits).size();i++){
-//		if((*playerUnits)[i].posistion.x-(*playerUnits)[i].UnitShape.getRadius()>=
+//		if((*playerUnits)[i].position.x-(*playerUnits)[i].UnitShape.getRadius()>=
 //	}
 //		
 //}
@@ -175,8 +209,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	//LEFT CLICK DOES TWO THINGS. SELECTION AND COMMANDING
 	//RIGHT CLICK ONLY DOES MOVE COMMAND
 	bool inWindow =false;
-	//string DisplayTest;
+	//std::string numberOfUnits="Number of Units Selected";
 	//unsigned int counter=0;
+	//numberOfUnits+std::to_string((static_cast<long long>( playerSelection.size())));
+	//http://stackoverflow.com/questions/10664699/stdto-string-more-than-instance-of-overloaded-function-matches-the-argument/10666695#10666695
+	//Oh wow a c++ static cast. Not my idea. VS2010 just doesn't fit the c++11 standard
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -191,6 +229,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				switch(mouseCommandState){
 				case Selecting://Selection Change
 					//pushBackSelection(&playerSelection,&playerUnits);
+					grabOnScreenSelectedUnits(&playerUnits,&playerSelection);
 					selectionDrawState=false;
 					break;
 				case Commanding:
@@ -226,8 +265,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		if(selectionDrawState==true){
 			window.draw(selectionShape);
 		}
-		
 
+		drawSelectionStroke(&playerSelection);
 		drawUnitVector(&window,playerUnits);
 		drawUnitVector(&window,enemyUnits);
         window.display();

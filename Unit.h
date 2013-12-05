@@ -9,7 +9,7 @@ class Unit
 		double HP;
 		double size;
 		bool selected;
-		Point2D posistion;
+		Point2D position;
 		sf::Color Color;
 		sf::CircleShape UnitShape;
 		std::vector<Command> unitCommands;//queue for Players Commands

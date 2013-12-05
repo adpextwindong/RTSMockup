@@ -3,18 +3,20 @@
 #include <SFML/Graphics.hpp>
 
 Unit::Unit(Point2D _Posistion,sf::Color _color,double _size){
-	posistion=Point2D(_Posistion.x+_size,_Posistion.y+_size);
+	position=Point2D(_Posistion.x+_size,_Posistion.y+_size);
 		//Makes circle center the Posistion
 	Color=_color;
 	size=_size;
 	selected = false;
 	UnitShape= sf::CircleShape(size);
-	UnitShape.setPosition(posistion.x,posistion.y);
+	UnitShape.setPosition(position.x,position.y);
 	UnitShape.setFillColor(Color);
+	speed = 0.f;
+	HP =0.f;
 }
 
 void Unit::Move(Point2D move2DVector){
-	posistion.add(move2DVector.x,move2DVector.y);
+	position.add(move2DVector.x,move2DVector.y);
 }
 Unit::~Unit(void)
 {
