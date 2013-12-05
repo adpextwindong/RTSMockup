@@ -52,6 +52,11 @@ void updateSelection(){
 			selectionShape.setSize(sf::Vector2f(originalPoint.x-LimitedMousePos.x,LimitedMousePos.y-originalPoint.y));
 		}
 	}
+	printf("Shape Pos:%f %f\n",selectionShape.getPosition().x,selectionShape.getPosition().y);
+	for(int i=0;i<4;i++){
+		printf("P %d: %.0f %.0f ",i,selectionShape.getPoint(i).x+selectionShape.getPosition().x,selectionShape.getPoint(i).y+selectionShape.getPosition().y);
+	}
+	printf("\n\n");
 	//printf("Limited MosPos %d %d ",LimitedMousePos.x,LimitedMousePos.y);
 	//printf("Real MosPos %d %d\n",sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y);
 	/*printf("Original Point %d %d ",originalPoint.x,originalPoint.y);
@@ -96,9 +101,13 @@ bool mouseIsOnScreen(){
 	}
 	return false;
 }
-void pushBackSelection(std::vector<Unit *>* &playerSelection,std::vector<Unit>* &playerUnits){
-
-}
+//void pushBackSelection(std::vector<Unit *>* playerSelection,std::vector<Unit>* playerUnits){//for control groups
+//	for(unsigned int i=0;i<(*playerUnits).size();i++){
+//		if((*playerUnits)[i].posistion.x-(*playerUnits)[i].UnitShape.getRadius()>=
+//	}
+//		
+//	selectionShape.
+//}
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//Cheat protection:
@@ -161,7 +170,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			if(leftMouseClickedLastCycle==true){//if user has released left click button
 				switch(mouseCommandState){
 				case Selecting://Selection Change
-					pushBackSelection(&playerSelection,&playerUnits);
+					//pushBackSelection(&playerSelection,&playerUnits);
 					selectionDrawState=false;
 					break;
 				case Commanding:
