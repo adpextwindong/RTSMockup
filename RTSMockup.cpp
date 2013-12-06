@@ -103,11 +103,17 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* playerUnits,std::vector<Unit *
 			}
 		}
 		if(containsThePointer==false){//adds the pointer to the list if its in the selection box
-			radius=(*playerUnits)[i].UnitShape.getRadius();
-			sf::Vector2f position((*playerUnits)[i].position.x,(*playerUnits)[i].position.y);
-			if(position.x-radius >= minX && position.x+radius <= maxX){
-				if(position.y-radius >= minY && position.y+radius <= maxY){
+			if(selectionShape.getSize().x ==0 && selectionShape.getSize().y ==0){
+				if(sqrt(std::pow((*playerUnits)[i].UnitShape.getRadius()+(*playerUnits)[i].UnitShape.getPosition().x-selectionShape.getPosition().x,2.0f)+std::pow((*playerUnits)[i].UnitShape.getRadius()+(*playerUnits)[i].UnitShape.getPosition().y-selectionShape.getPosition().y,2.0f))<=(*playerUnits)[i].UnitShape.getRadius()){
 					(*playerSelection).push_back(&(*playerUnits)[i]);
+				}
+			}else{
+				radius=(*playerUnits)[i].UnitShape.getRadius()/2;
+				sf::Vector2f position((*playerUnits)[i].position.x,(*playerUnits)[i].position.y);
+				if(position.x >= minX && position.x <= maxX){
+					if(position.y >= minY && position.y <= maxY){
+						(*playerSelection).push_back(&(*playerUnits)[i]);
+					}
 				}
 			}
 		}
