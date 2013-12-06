@@ -8,7 +8,7 @@
 
 #define PLAYER_COLOR Color::Green
 #define SELECTION_STROKE_COLOR sf::Color::Blue
-#define STROKE_SIZE 3
+#define STROKE_SIZE 4
 
 enum DecisionState {Selecting,Commanding};
  
@@ -173,7 +173,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Encrypt packets
 	//or use Base64 and obsfuscate
 	
-	window.setFramerateLimit(61);
+	sf::ContextSettings settings;
+	settings.antialiasingLevel=8;
+
 	std::vector<Unit> playerUnits;
 	std::vector<Unit> enemyUnits;
 	std::vector<Unit *> playerSelection;
@@ -195,7 +197,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	selectionShape.setFillColor(sf::Color::Transparent);
 	selectionShape.setOutlineThickness(3.0f);
-	selectionShape.setOutlineColor(sf::Color::White);
+	selectionShape.setOutlineColor(sf::Color::Black);
 	selectionShape.setSize(sf::Vector2f(0.f,0.f));
 
 	bool selectionDrawState = false; //user is selecting if true
@@ -214,7 +216,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//numberOfUnits+std::to_string((static_cast<long long>( playerSelection.size())));
 	//http://stackoverflow.com/questions/10664699/stdto-string-more-than-instance-of-overloaded-function-matches-the-argument/10666695#10666695
 	//Oh wow a c++ static cast. Not my idea. VS2010 just doesn't fit the c++11 standard
-
+	sf::RectangleShape background(sf::Vector2f(window.getSize().x,window.getSize().y));
+	background.setFillColor(sf::Color::White);
     while (window.isOpen())
     {
         sf::Event event;
@@ -262,10 +265,10 @@ int _tmain(int argc, _TCHAR* argv[])
         window.clear();
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
+		window.draw(background);
 		if(selectionDrawState==true){
 			window.draw(selectionShape);
 		}
-
 		drawSelectionStroke(&playerSelection);
 		drawUnitVector(&window,playerUnits);
 		drawUnitVector(&window,enemyUnits);
