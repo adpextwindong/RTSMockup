@@ -116,6 +116,15 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* playerUnits,std::vector<Unit *
 					}
 				}
 			}
+		}else{//if it contains it
+			if(shifted==true){
+				if(selectionShape.getSize().x ==0 && selectionShape.getSize().y ==0){
+					if(sqrt(std::pow((*playerUnits)[i].UnitShape.getRadius()+(*playerUnits)[i].UnitShape.getPosition().x-selectionShape.getPosition().x,2.0f)+std::pow((*playerUnits)[i].UnitShape.getRadius()+(*playerUnits)[i].UnitShape.getPosition().y-selectionShape.getPosition().y,2.0f))<=(*playerUnits)[i].UnitShape.getRadius()){
+						(*playerSelection).erase((*playerSelection).begin()+i);
+						break;
+					}
+				}
+			}
 		}
 	}
 }
@@ -238,7 +247,9 @@ int _tmain(int argc, _TCHAR* argv[])
 				switch(mouseCommandState){
 				case Selecting://Selection Change
 					//pushBackSelection(&playerSelection,&playerUnits);
+					
 					grabOnScreenSelectedUnits(&playerUnits,&playerSelection);
+					printf("%d\n",playerSelection.size());
 					selectionDrawState=false;
 					break;
 				case Commanding:
