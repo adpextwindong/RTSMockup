@@ -57,25 +57,27 @@ void updateSelection(){
 		}
 	}
 
-	printf("Shape Pos:%f %f\n",selectionShape.getPosition().x,selectionShape.getPosition().y);
+	//printf("Shape Pos:%f %f\n",selectionShape.getPosition().x,selectionShape.getPosition().y);
 	for(int i=0;i<4;i++){
-		printf("P(%d): %.0f,%.0f ",i,selectionShape.getPoint(i).x+selectionShape.getPosition().x,selectionShape.getPoint(i).y+selectionShape.getPosition().y);
+		//printf("P(%d): %.0f,%.0f ",i,selectionShape.getPoint(i).x+selectionShape.getPosition().x,selectionShape.getPoint(i).y+selectionShape.getPosition().y);
 	}
-	printf("\n\n");
+	//printf("\n\n");
+
 	//printf("Limited MosPos %d %d ",LimitedMousePos.x,LimitedMousePos.y);
 	//printf("Real MosPos %d %d\n",sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y);
 	/*printf("Original Point %d %d ",originalPoint.x,originalPoint.y);
 	printf("Selection Cords %f.0 %f.0\n\n",selectionShape.getPosition().x,selectionShape.getPosition().y);*/
 }
+unsigned int counter=0;
 void grabOnScreenSelectedUnits(std::vector<Unit>* playerUnits,std::vector<Unit *>* playerSelection){
 	bool shifted = false;
 	unsigned int preExistingElemCount=0;
 	if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)&&!sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
-		printf("UnShifted %S Command","Selection");
+		printf("UnShifted %S Command \n","Selection");
 		(*playerSelection).clear();
 		//printf("\nList cleared\n");
 	}else{
-		printf("Shifted %S Command","Selection");
+		printf("Shifted %S Command \n","Selection");
 		shifted=true;
 		preExistingElemCount=(*playerSelection).size();
 	}
@@ -90,6 +92,9 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* playerUnits,std::vector<Unit *
 		maxY = maxY < selectionShape.getPoint(i).y+selectionShape.getPosition().y ? selectionShape.getPoint(i).y+selectionShape.getPosition().y : maxY;
 	}
 	float radius=0.f;
+	if(shifted==true){
+		shifted=true;
+	}
 	for(unsigned int i=0;i<(*playerUnits).size();i++){
 		Unit * currentPointer=NULL;
 		bool containsThePointer = false;
@@ -118,9 +123,15 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* playerUnits,std::vector<Unit *
 			}
 		}else{//if it contains it
 			if(shifted==true){
+				if(counter==2){
+					printf("Doing it\n");
+				}
 				if(selectionShape.getSize().x ==0 && selectionShape.getSize().y ==0){
 					if(sqrt(std::pow((*playerUnits)[i].UnitShape.getRadius()+(*playerUnits)[i].UnitShape.getPosition().x-selectionShape.getPosition().x,2.0f)+std::pow((*playerUnits)[i].UnitShape.getRadius()+(*playerUnits)[i].UnitShape.getPosition().y-selectionShape.getPosition().y,2.0f))<=(*playerUnits)[i].UnitShape.getRadius()){
-						(*playerSelection).erase((*playerSelection).begin()+i);
+						printf("You're deselcting %d\n",i);
+						printf("DEBUG");
+						counter++;
+						(*playerSelection).erase((*playerSelection).cbegin()+i);
 						break;
 					}
 				}
@@ -249,7 +260,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					//pushBackSelection(&playerSelection,&playerUnits);
 					
 					grabOnScreenSelectedUnits(&playerUnits,&playerSelection);
-					printf("%d\n",playerSelection.size());
+					//printf("%d\n",playerSelection.size());
 					selectionDrawState=false;
 					break;
 				case Commanding:
