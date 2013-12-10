@@ -15,6 +15,8 @@ enum DecisionState {Selecting,Commanding};
 sf::RectangleShape c_clientSelectionShape;
 sf::Vector2i originalPoint;//SELECT LEFT CLICK POINT
 sf::RenderWindow window(sf::VideoMode(1024, 768), "RTS Mockup");
+std::vector<Unit> s_playerUnits;
+std::vector<Unit> s_enemyUnits;
 
 void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//draws all the units in a unit list
 	for(unsigned int i=0;i<list.size();i++){
@@ -191,11 +193,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	//c_xxx for client side stuff
 	//s_xxx for game state that will be server side in the future
 
+	//Game world is a large grid system
+	//Units have different shapes
+
 	sf::ContextSettings c_settings;
 	c_settings.antialiasingLevel=8;
 
-	std::vector<Unit> s_playerUnits;
-	std::vector<Unit> s_enemyUnits;
 	std::vector<Unit *> c_playerSelection;
 
 	for(unsigned int i=0;i<5;i++){
