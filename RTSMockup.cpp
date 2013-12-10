@@ -92,47 +92,35 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* playerUnits,std::vector<Unit *
 		maxY = maxY < selectionShape.getPoint(i).y+selectionShape.getPosition().y ? selectionShape.getPoint(i).y+selectionShape.getPosition().y : maxY;
 	}
 	float radius=0.f;
-	if(shifted==true){
-		shifted=true;
-	}
-	for(unsigned int i=0;i<(*playerUnits).size();i++){
+	for(unsigned int unitIterator=0;unitIterator<(*playerUnits).size();unitIterator++){//Iterate through all units
 		Unit * currentPointer=NULL;
 		bool containsThePointer = false;
-		if(shifted==true){//Checks vector if it contains pointer, allows for no duplicates
-			currentPointer =&(*playerUnits)[i];
-			for(unsigned int j=0;j<preExistingElemCount;j++){
+		if(shifted==true){//If user is adding, check if current unit is on the list already
+			currentPointer =&(*playerUnits)[unitIterator];
+			for(unsigned int j=0;j<(*playerSelection).size();j++){//iterate through unit selection vector
 				if(currentPointer==(*playerSelection)[j]){
 					containsThePointer=true;
+					if(selectionShape.getSize().x ==0 && selectionShape.getSize().y ==0){
+						if(sqrt(std::pow((*playerUnits)[unitIterator].UnitShape.getRadius()+(*playerUnits)[unitIterator].UnitShape.getPosition().x-selectionShape.getPosition().x,2.0f)+std::pow((*playerUnits)[unitIterator].UnitShape.getRadius()+(*playerUnits)[unitIterator].UnitShape.getPosition().y-selectionShape.getPosition().y,2.0f))<=(*playerUnits)[unitIterator].UnitShape.getRadius()){
+							(*playerSelection).erase((*playerSelection).begin()+j);
+							unitIterator=(*playerUnits).size()+1;
+						}
+					}
 					break;
 				}
 			}
 		}
-		if(containsThePointer==false){//adds the pointer to the list if its in the selection box
+		if(containsThePointer==false){//if this element isn't in the list
 			if(selectionShape.getSize().x ==0 && selectionShape.getSize().y ==0){
-				if(sqrt(std::pow((*playerUnits)[i].UnitShape.getRadius()+(*playerUnits)[i].UnitShape.getPosition().x-selectionShape.getPosition().x,2.0f)+std::pow((*playerUnits)[i].UnitShape.getRadius()+(*playerUnits)[i].UnitShape.getPosition().y-selectionShape.getPosition().y,2.0f))<=(*playerUnits)[i].UnitShape.getRadius()){
-					(*playerSelection).push_back(&(*playerUnits)[i]);
+				if(sqrt(std::pow((*playerUnits)[unitIterator].UnitShape.getRadius()+(*playerUnits)[unitIterator].UnitShape.getPosition().x-selectionShape.getPosition().x,2.0f)+std::pow((*playerUnits)[unitIterator].UnitShape.getRadius()+(*playerUnits)[unitIterator].UnitShape.getPosition().y-selectionShape.getPosition().y,2.0f))<=(*playerUnits)[unitIterator].UnitShape.getRadius()){
+					(*playerSelection).push_back(&(*playerUnits)[unitIterator]);
 				}
 			}else{
-				radius=(*playerUnits)[i].UnitShape.getRadius()/2;
-				sf::Vector2f position((*playerUnits)[i].position.x,(*playerUnits)[i].position.y);
+				radius=(*playerUnits)[unitIterator].UnitShape.getRadius()/2;
+				sf::Vector2f position((*playerUnits)[unitIterator].position.x,(*playerUnits)[unitIterator].position.y);
 				if(position.x >= minX && position.x <= maxX){
 					if(position.y >= minY && position.y <= maxY){
-						(*playerSelection).push_back(&(*playerUnits)[i]);
-					}
-				}
-			}
-		}else{//if it contains it
-			if(shifted==true){
-				if(counter==2){
-					printf("Doing it\n");
-				}
-				if(selectionShape.getSize().x ==0 && selectionShape.getSize().y ==0){
-					if(sqrt(std::pow((*playerUnits)[i].UnitShape.getRadius()+(*playerUnits)[i].UnitShape.getPosition().x-selectionShape.getPosition().x,2.0f)+std::pow((*playerUnits)[i].UnitShape.getRadius()+(*playerUnits)[i].UnitShape.getPosition().y-selectionShape.getPosition().y,2.0f))<=(*playerUnits)[i].UnitShape.getRadius()){
-						printf("You're deselcting %d\n",i);
-						printf("DEBUG");
-						counter++;
-						(*playerSelection).erase((*playerSelection).cbegin()+i);
-						break;
+						(*playerSelection).push_back(&(*playerUnits)[unitIterator]);
 					}
 				}
 			}
@@ -260,7 +248,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					//pushBackSelection(&playerSelection,&playerUnits);
 					
 					grabOnScreenSelectedUnits(&playerUnits,&playerSelection);
-					//printf("%d\n",playerSelection.size());
+					printf("%d\n",playerSelection.size());
 					selectionDrawState=false;
 					break;
 				case Commanding:
