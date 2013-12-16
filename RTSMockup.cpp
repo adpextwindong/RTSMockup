@@ -1,14 +1,15 @@
 // RTSMockup.cpp : Defines the entry point for the console application.
 #include "stdafx.h"
-#include <string.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Unit.h"//Unit Object Class
 #include "Command.h"//Unit Commands
+#include "Tile.h"//Game Array Tile Class
 
 #define PLAYER_COLOR Color::Green
 #define SELECTION_STROKE_COLOR sf::Color::Blue
 #define STROKE_SIZE 4
+#define GAMEARRAYSIZE_MOCKUP 128
 
 enum DecisionState {Selecting,Commanding};
  
@@ -17,6 +18,7 @@ sf::Vector2i originalPoint;//SELECT LEFT CLICK POINT
 sf::RenderWindow window(sf::VideoMode(1024, 768), "RTS Mockup");
 std::vector<Unit> s_playerUnits;
 std::vector<Unit> s_enemyUnits;
+Tile gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];
 
 void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//draws all the units in a unit list
 	for(unsigned int i=0;i<list.size();i++){
@@ -196,6 +198,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Game world is a large grid system
 	//Units have different shapes
 
+	
 	sf::ContextSettings c_settings;
 	c_settings.antialiasingLevel=8;
 
