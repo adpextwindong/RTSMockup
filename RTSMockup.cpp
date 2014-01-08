@@ -14,11 +14,11 @@
 enum DecisionState {Selecting,Commanding};
  
 sf::RectangleShape c_clientSelectionShape;
-sf::Vector2i originalPoint;//SELECT LEFT CLICK POINT
+sf::Vector2i c_originalSelectPoint;//SELECT LEFT CLICK POINT
 sf::RenderWindow window(sf::VideoMode(1024, 768), "RTS Mockup");
 std::vector<Unit> s_playerUnits;
 std::vector<Unit> s_enemyUnits;
-Tile gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];
+Tile gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];//game level
 
 void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//draws all the units in a unit list
 	for(unsigned int i=0;i<list.size();i++){
@@ -43,21 +43,21 @@ void updateSelection(){
 			LimitedMousePos.y=window.getSize().y;
 		}
 	}
-	int yDiff=(LimitedMousePos.y-originalPoint.y);
-	if((LimitedMousePos.x-originalPoint.x)<=0){//Xdiff +x
+	int yDiff=(LimitedMousePos.y-c_originalSelectPoint.y);
+	if((LimitedMousePos.x-c_originalSelectPoint.x)<=0){//Xdiff +x
 		if(yDiff<=0){//+x +y Quad 1
-			c_clientSelectionShape.setPosition(originalPoint.x,LimitedMousePos.y);
-			c_clientSelectionShape.setSize(sf::Vector2f(LimitedMousePos.x-originalPoint.x,originalPoint.y-LimitedMousePos.y));
+			c_clientSelectionShape.setPosition(c_originalSelectPoint.x,LimitedMousePos.y);
+			c_clientSelectionShape.setSize(sf::Vector2f(LimitedMousePos.x-c_originalSelectPoint.x,c_originalSelectPoint.y-LimitedMousePos.y));
 		}else{//+x -y Quad 4
-			c_clientSelectionShape.setSize(sf::Vector2f(LimitedMousePos.x-originalPoint.x,LimitedMousePos.y-originalPoint.y));
+			c_clientSelectionShape.setSize(sf::Vector2f(LimitedMousePos.x-c_originalSelectPoint.x,LimitedMousePos.y-c_originalSelectPoint.y));
 		}
 	}else{
 		if(yDiff<=0){// -x +y Quad 2
 			c_clientSelectionShape.setPosition(sf::Vector2f(LimitedMousePos));
-			c_clientSelectionShape.setSize(sf::Vector2f(originalPoint.x-LimitedMousePos.x,originalPoint.y-LimitedMousePos.y));
+			c_clientSelectionShape.setSize(sf::Vector2f(c_originalSelectPoint.x-LimitedMousePos.x,c_originalSelectPoint.y-LimitedMousePos.y));
 		}else{// -x -y Quad 3
-			c_clientSelectionShape.setPosition(sf::Vector2f(LimitedMousePos.x,originalPoint.y));
-			c_clientSelectionShape.setSize(sf::Vector2f(originalPoint.x-LimitedMousePos.x,LimitedMousePos.y-originalPoint.y));
+			c_clientSelectionShape.setPosition(sf::Vector2f(LimitedMousePos.x,c_originalSelectPoint.y));
+			c_clientSelectionShape.setSize(sf::Vector2f(c_originalSelectPoint.x-LimitedMousePos.x,LimitedMousePos.y-c_originalSelectPoint.y));
 		}
 	}
 
@@ -69,7 +69,7 @@ void updateSelection(){
 
 	//printf("Limited MosPos %d %d ",LimitedMousePos.x,LimitedMousePos.y);
 	//printf("Real MosPos %d %d\n",sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y);
-	/*printf("Original Point %d %d ",originalPoint.x,originalPoint.y);
+	/*printf("Original Point %d %d ",c_originalSelectPoint.x,c_originalSelectPoint.y);
 	printf("Selection Cords %f.0 %f.0\n\n",c_clientSelectionShape.getPosition().x,c_clientSelectionShape.getPosition().y);*/
 }
 unsigned int counter=0;
@@ -185,6 +185,14 @@ void drawSelectionStroke(std::vector<Unit*>* c_playerSelection){
 //	}
 //		
 //}
+
+void drawLevel(){
+	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
+		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
+			window.draw(gameLevel[i][j].tileSprite);
+		}
+	}
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//Cheat protection:
@@ -198,18 +206,45 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Game world is a large grid system
 	//Units have different shapes
 
+	//TODO MAKE Tile constructor
+	//TODO Discuss doing the fallout method of 3d.
+		//Make render, take isometric snapshots of it. Stick to SFML
 	
 	sf::ContextSettings c_settings;
 	c_settings.antialiasingLevel=8;
 	
-	sf::Texture grassTileTexture;
-	if(!grassTileTexture.loadFromFile("mockupTile.png")){
+	sf::Texture openTileTexture;
+	if(!openTileTexture.loadFromFile("mockupTileOpen.png")){
 		printf("Texture load failure");
 		getchar();
 		return -1;
 	}
+	sf::Texture closedTileTexture;
+	if(!closedTileTexture.loadFromFile("mockupTileClosed.png")){
+		printf("Texture load failure");
+		getchar();
+		return -1;
+	}
+	std::srand(time(NULL));
+	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
+		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
+			gameLevel[i][j].open=std::rand()%2+0;
+			//printf("%s\n",gameLevel[i][j].open?"TRUE":"FALSE");
+			gameLevel[i][j].tileSprite= gameLevel[i][j].open ? sf::Sprite(openTileTexture) : sf::Sprite(closedTileTexture);
+			gameLevel[i][j].tileSprite.setPosition(sf::Vector2f(i*32,j*32));
+		}
+	}
+	//http://www.sfml-dev.org/tutorials/2.1/graphics-vertex-array.php
+	sf::VertexArray tileSet;
+	tileSet.setPrimitiveType(sf::Quads);
+	tileSet.resize(GAMEARRAYSIZE_MOCKUP*GAMEARRAYSIZE_MOCKUP*4);
+	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
+		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
+			
+		}
+	}
 
-	sf::Sprite grassTileSprite(grassTileTexture);
+	//sf::Sprite grassTileSprite(grassTileTexture);
 
 	std::vector<Unit *> c_playerSelection;
 
@@ -273,7 +308,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					switch(mouseCommandState){
 					case Selecting:
 						c_clientSelectionShape.setSize(sf::Vector2f(0,0));
-						originalPoint=sf::Mouse::getPosition(window);
+						c_originalSelectPoint=sf::Mouse::getPosition(window);
 						updateSelection();
 						selectionDrawState=true;
 						break;
@@ -295,13 +330,21 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
 		window.draw(background);
+
+
+		//drawLevel();
+
 		if(selectionDrawState==true){
 			window.draw(c_clientSelectionShape);
 		}
+		
+		
+		
 		drawSelectionStroke(&c_playerSelection);
 		drawUnitVector(&window,s_playerUnits);
 		drawUnitVector(&window,s_enemyUnits);
-		window.draw(grassTileSprite);
+
+		//window.draw(grassTileSprite);
         window.display();
     }
 

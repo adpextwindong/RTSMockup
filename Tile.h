@@ -7,6 +7,7 @@ class Tile
 public:
 	bool open;
 	std::vector<Unit*> containingUnits;
+	sf::Sprite tileSprite;
 	Tile(void);
 	Tile(bool);
 	~Tile(void);
