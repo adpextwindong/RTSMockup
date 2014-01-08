@@ -201,6 +201,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	sf::ContextSettings c_settings;
 	c_settings.antialiasingLevel=8;
+	
+	sf::Texture grassTileTexture;
+	if(!grassTileTexture.loadFromFile("mockupTile.png")){
+		printf("Texture load failure");
+		getchar();
+		return -1;
+	}
+
+	sf::Sprite grassTileSprite(grassTileTexture);
 
 	std::vector<Unit *> c_playerSelection;
 
@@ -292,6 +301,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		drawSelectionStroke(&c_playerSelection);
 		drawUnitVector(&window,s_playerUnits);
 		drawUnitVector(&window,s_enemyUnits);
+		window.draw(grassTileSprite);
         window.display();
     }
 
