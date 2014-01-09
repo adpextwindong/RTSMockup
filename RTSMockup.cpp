@@ -10,6 +10,7 @@
 #define SELECTION_STROKE_COLOR sf::Color::Blue
 #define STROKE_SIZE 4
 #define GAMEARRAYSIZE_MOCKUP 128
+#define TILE_SIZE 32
 
 enum DecisionState {Selecting,Commanding};
  
@@ -213,6 +214,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	sf::ContextSettings c_settings;
 	c_settings.antialiasingLevel=8;
 	
+	sf::Texture tileSetTexture;
+	if(!tileSetTexture.loadFromFile("mockupTileSet.png")){
+		printf("Texture load failure");
+		getchar();
+		return -1;
+	}
 	sf::Texture openTileTexture;
 	if(!openTileTexture.loadFromFile("mockupTileOpen.png")){
 		printf("Texture load failure");
@@ -236,13 +243,52 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	//http://www.sfml-dev.org/tutorials/2.1/graphics-vertex-array.php
 	sf::VertexArray tileSet;
+
+	sf::RenderStates tileSetStates;
+	tileSetStates.texture = &tileSetTexture;
+
 	tileSet.setPrimitiveType(sf::Quads);
-	tileSet.resize(GAMEARRAYSIZE_MOCKUP*GAMEARRAYSIZE_MOCKUP*4);
-	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
-		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
-			
+	//tileSet.resize(2*2*4);
+	//for(unsigned int i=0;i<2;i++){
+	//	for(unsigned int j=0;j<0;j++){
+	//		sf::Vertex * quad = &tileSet[i +(j * 4)];
+	//		quad[0].position = sf::Vector2f(2*i*TILE_SIZE,j*TILE_SIZE);
+	//		quad[1].position = sf::Vector2f((2*i+1)*TILE_SIZE,j*TILE_SIZE);
+	//		quad[2].position = sf::Vector2f((2*i+1)*TILE_SIZE,(j+1)*TILE_SIZE);
+	//		quad[3].position = sf::Vector2f(2*i*TILE_SIZE,(j+1)*TILE_SIZE);
+
+	//		quad[0].texCoords = sf::Vector2f(0,0);
+	//		quad[1].texCoords = sf::Vector2f(32,0);
+	//		quad[2].texCoords = sf::Vector2f(32,32);
+	//		quad[3].texCoords = sf::Vector2f(0,32);
+	//	}
+	//}
+
+	//tileSet.resize(GAMEARRAYSIZE_MOCKUP*GAMEARRAYSIZE_MOCKUP*4);
+	tileSet.resize((1024/32)*(768/32)*4);
+	for(unsigned int i=0;i<(1024/32);i++){
+		for(unsigned int j=0;j<(768/32);j++){
+			sf::Vertex * quad = &tileSet[i +(j * 4)];
+			quad[0].position = sf::Vector2f(i*TILE_SIZE,j*TILE_SIZE);
+			quad[1].position = sf::Vector2f((i+1)*TILE_SIZE,j*TILE_SIZE);
+			quad[2].position = sf::Vector2f((i+1)*TILE_SIZE,(j+1)*TILE_SIZE);
+			quad[3].position = sf::Vector2f(i*TILE_SIZE,(j+1)*TILE_SIZE);
+
+			unsigned int open = gameLevel[i][j].open;
+			//printf("%d",open);
+			quad[0].texCoords = sf::Vector2f(0,0);
+			quad[1].texCoords = sf::Vector2f(32,0);
+			quad[2].texCoords = sf::Vector2f(32,32);
+			quad[3].texCoords = sf::Vector2f(0,32);
+
+			quad[0].texCoords = sf::Vector2f(open*TILE_SIZE,(open*TILE_SIZE));
+			quad[1].texCoords = sf::Vector2f(open*TILE_SIZE,(open*TILE_SIZE));
+			quad[2].texCoords = sf::Vector2f(open*TILE_SIZE,(open*TILE_SIZE));
+			quad[3].texCoords = sf::Vector2f(open*TILE_SIZE,(open*TILE_SIZE));
 		}
 	}
+
+
 
 	//sf::Sprite grassTileSprite(grassTileTexture);
 
@@ -329,22 +375,23 @@ int _tmain(int argc, _TCHAR* argv[])
         window.clear();
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
-		window.draw(background);
+		//window.draw(background);
 
 
 		//drawLevel();
 
-		if(selectionDrawState==true){
-			window.draw(c_clientSelectionShape);
-		}
+		window.draw(tileSet,tileSetStates);
 		
 		
 		
 		drawSelectionStroke(&c_playerSelection);
 		drawUnitVector(&window,s_playerUnits);
 		drawUnitVector(&window,s_enemyUnits);
-
+		
 		//window.draw(grassTileSprite);
+		if(selectionDrawState==true){
+			window.draw(c_clientSelectionShape);
+		}
         window.display();
     }
 

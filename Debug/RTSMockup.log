@@ -1,37 +1,53 @@
-﻿Build started 1/8/2014 8:54:14 AM.
+﻿Build started 1/9/2014 1:01:41 PM.
      1>Project "C:\Users\George\Documents\GitHub\RTSMockup\RTSMockup.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Creating "Debug\RTSMockup.unsuccessfulbuild" because "AlwaysCreate" was specified.
+         Touching "Debug\RTSMockup.unsuccessfulbuild".
        ClCompile:
          All outputs are up-to-date.
          c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\SFML21VS2010\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\RTSMockup.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt RTSMockup.cpp
          RTSMockup.cpp
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(32): warning C4018: '>' : signed/unsigned mismatch
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(39): warning C4018: '>' : signed/unsigned mismatch
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(49): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(49): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(33): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(40): warning C4018: '>' : signed/unsigned mismatch
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(50): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(50): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(52): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(52): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(57): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(57): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(59): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(59): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(51): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(51): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(53): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(53): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(58): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(58): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(60): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(60): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(124): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(124): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(164): warning C4018: '<=' : signed/unsigned mismatch
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(61): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(61): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(125): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(125): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(165): warning C4018: '<=' : signed/unsigned mismatch
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(226): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(229): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(232): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(232): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(269): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(269): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(145): warning C4715: 'commandString' : not all control paths return a value
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(291): warning C4700: uninitialized local variable 'currentCommand' used
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(166): warning C4018: '<=' : signed/unsigned mismatch
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(235): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(238): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(241): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(241): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(272): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(272): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(273): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(273): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(274): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(274): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(275): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(275): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(284): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(284): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(285): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(285): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(286): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(286): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(287): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(287): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(327): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(327): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(146): warning C4715: 'commandString' : not all control paths return a value
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(349): warning C4700: uninitialized local variable 'currentCommand' used
        ManifestResourceCompile:
          All outputs are up-to-date.
        Link:
@@ -55,4 +71,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.35
+Time Elapsed 00:00:02.33
