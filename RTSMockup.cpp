@@ -187,7 +187,30 @@ void drawSelectionStroke(std::vector<Unit*>* c_playerSelection){
 //	}
 //		
 //}
+void setQuadPos(sf::Vertex * quad,const unsigned int i,const unsigned int j){
+	quad[0].position = sf::Vector2f(i * TILE_SIZE, j * TILE_SIZE);
+    quad[1].position = sf::Vector2f((i + 1) * TILE_SIZE, j * TILE_SIZE);
+    quad[2].position = sf::Vector2f((i + 1) * TILE_SIZE, (j + 1) * TILE_SIZE);
+    quad[3].position = sf::Vector2f(i * TILE_SIZE, (j + 1) * TILE_SIZE);
+}
 
+void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j){//TODO FIX THIS
+	if(gameLevel[i][j].open){
+		printf("TOP LEFT %d %d\n",(gameLevel[i][j].open) * TILE_SIZE,0);
+		printf("TOP RIGHT %d %d\n",(2*gameLevel[i][j].open) * TILE_SIZE,0);
+		printf("BOTTOM RIGHT %d %d\n",(2*gameLevel[i][j].open) * TILE_SIZE,TILE_SIZE);
+		printf("BOTTOM LEFT %d %d\n",(gameLevel[i][j].open) * TILE_SIZE,TILE_SIZE);
+		printf("\n");
+	}
+	//TOP LEFT
+	quad[0].texCoords = sf::Vector2f((gameLevel[i][j].open) * TILE_SIZE,0);
+	//TOP RIGHT
+	quad[1].texCoords = sf::Vector2f((2*gameLevel[i][j].open) * TILE_SIZE,0);
+	//BOTTOM RIGHT
+	quad[2].texCoords = sf::Vector2f((2*gameLevel[i][j].open) * TILE_SIZE,TILE_SIZE);
+	//BOTTOM LEFT
+	quad[0].texCoords = sf::Vector2f((gameLevel[i][j].open) * TILE_SIZE,TILE_SIZE);
+}
 void drawLevel(){
 	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
 		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
@@ -211,7 +234,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TODO MAKE Tile constructor
 	//TODO Discuss doing the fallout method of 3d.
 		//Make render, take isometric snapshots of it. Stick to SFML
-	
+	printf("%d",sf::Texture().getMaximumSize());
 	sf::ContextSettings c_settings;
 	c_settings.antialiasingLevel=8;
 	
@@ -279,23 +302,50 @@ int _tmain(int argc, _TCHAR* argv[])
 		return -1;
 	}
 
-	sf::VertexArray tileSet;
-	tileSet.setPrimitiveType(sf::Quads);
-	tileSet.resize(4);
+	sf::Sprite testSprite(tileSetTexture,sf::IntRect(32,0,32,32));
+	testSprite.setPosition(40,40);
+
+	const int tileViewSizeX=window.getSize().x/TILE_SIZE;
+	const int tileViewSizeY=window.getSize().y/TILE_SIZE;
+	printf("\n%d %d\n",tileViewSizeX,tileViewSizeY);
+	sf::VertexArray tileSet(sf::Quads,4*tileViewSizeX*tileViewSizeY);
 
 	sf::RenderStates tileSetStates;
 	tileSetStates.blendMode=sf::BlendNone;
 	tileSetStates.texture = &tileSetTexture;
 
-	tileSet[0].position=sf::Vector2f(0,0);
-	tileSet[1].position=sf::Vector2f(16,0);
-	tileSet[2].position=sf::Vector2f(16,16);
-	tileSet[3].position=sf::Vector2f(0,16);
+	for(unsigned int y=0;y<tileViewSizeY;y++){
+		for(unsigned int x=0;x<tileViewSizeX;x++){
+			tileSet[x+(y*4)].position=sf::Vector2f();
+			tileSet[x+(y*4)].texCoords=sf::Vector2f();
+		}
+	}
+	for (unsigned int i = 0; i < tileViewSizeX; ++i){
+            for (unsigned int j = 0; j < tileViewSizeY; ++j){
+				// get a pointer to the current tile's quad
+                sf::Vertex* quad = &tileSet[(i + j * tileViewSizeX) * 4];
 
-	tileSet[0].texCoords=sf::Vector2f(0,0);
-	tileSet[1].texCoords=sf::Vector2f(16,0);
-	tileSet[2].texCoords=sf::Vector2f(16,16);
-	tileSet[3].texCoords=sf::Vector2f(0,16);
+                // define its 4 corners
+                setQuadPos(quad,i,j);
+                // define its 4 texture coordinates
+				setQuadTexture(quad,i,j);
+
+                //quad[0].texCoords = sf::Vector2f(gameLevel[i][j].open * tileViewSizeX, gameLevel[i][j].open * tileViewSizeY);
+                //quad[1].texCoords = sf::Vector2f((gameLevel[i][j].open + 1) * tileViewSizeX, gameLevel[i][j].open * tileViewSizeY);
+                //quad[2].texCoords = sf::Vector2f((gameLevel[i][j].open + 1) * tileViewSizeX, (gameLevel[i][j].open + 1) * tileViewSizeY);
+                //quad[3].texCoords = sf::Vector2f(gameLevel[i][j].open * tileViewSizeX, (gameLevel[i][j].open + 1) * tileViewSizeY);
+           }
+	}
+
+	//tileSet[0].position=sf::Vector2f(0,0);
+	//tileSet[1].position=sf::Vector2f(16,0);
+	//tileSet[2].position=sf::Vector2f(16,16);
+	//tileSet[3].position=sf::Vector2f(0,16);
+
+	//tileSet[0].texCoords=sf::Vector2f(1,1);
+	//tileSet[1].texCoords=sf::Vector2f(17,1);
+	//tileSet[2].texCoords=sf::Vector2f(17,17);
+	//tileSet[3].texCoords=sf::Vector2f(1,17);
 
     while (window.isOpen())
     {
@@ -355,15 +405,18 @@ int _tmain(int argc, _TCHAR* argv[])
 		
 		
 		
-		//drawSelectionStroke(&c_playerSelection);
-		//drawUnitVector(&window,s_playerUnits);
-		//drawUnitVector(&window,s_enemyUnits);
+		drawSelectionStroke(&c_playerSelection);
+		drawUnitVector(&window,s_playerUnits);
+		drawUnitVector(&window,s_enemyUnits);
 		
 		//window.draw(grassTileSprite);
 		if(selectionDrawState==true){
 			window.draw(c_clientSelectionShape);
 		}
-		window.draw(tileSet,tileSetStates);
+		//window.draw(&tileSet[4],4,sf::Quads,tileSetStates);
+		//window.draw(tileSet,tileSetStates);
+		window.draw(testSprite);
+
         window.display();
 		
     }
