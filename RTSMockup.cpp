@@ -22,6 +22,16 @@ std::vector<Unit> s_playerUnits;
 std::vector<Unit> s_enemyUnits;
 Tile gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];//game level
 
+
+
+//Mouse Selection & Commanding
+std::vector<Unit *> c_playerSelection;
+CommandEnum currentCommand;
+//Mouse Logic Variables
+bool leftMouseClickedLastCycle;
+DecisionState mouseCommandState;
+bool selectionDrawState;
+
 void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//draws all the units in a unit list
 	for(unsigned int i=0;i<list.size();i++){
 		(*window).draw(list[i].UnitShape);
@@ -199,14 +209,16 @@ void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j)
 	//	FALSE		TRUE
 	//0,0  32,0		32,0  64,0
 	//0,32 32,32	32,32 64,32
+
+	sf::Vector2f cordOrder[4]={ sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,0.0),
+								sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,0.0),
+								sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,TILE_SIZE),
+								sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,TILE_SIZE)
+	}
 	quad[0].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,0.0);				//TOP LEFT
 	quad[1].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,0.0);		//TOP RIGHT
 	quad[2].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,TILE_SIZE);	//BOTTOM RIGHT
 	quad[3].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,TILE_SIZE);		//BOTTOM LEFT
-	//printf("%f %f\n",(float)(gameLevel[i][j].open*TILE_SIZE)+0.0,(float) 0.0);
-	//printf("%f %f\n",(float) (gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,(float) 0.0);
-	//printf("%f %f\n",(float) (gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,(float) TILE_SIZE);
-	//printf("%f %f\n",(float) (gameLevel[i][j].open*TILE_SIZE)+0.0,(float) TILE_SIZE);
 	//if(gameLevel[i][j].open){
 		//printf("%s",gameLevel[i][j].open?"TRUE\n":"FALSE\n");
 		//printf("TOP LEFT %f %f\n",quad[0].texCoords.x,quad[0].texCoords.y);
@@ -222,6 +234,46 @@ void drawLevel(){
 			window.draw(gameLevel[i][j].tileSprite);
 		}
 	}
+}
+void mouseLogic(){
+			//IF MOUSE IS ON THE WINDOW
+		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)^leftMouseClickedLastCycle){//if Left Mouse Button state has changed since last cycle
+			if(leftMouseClickedLastCycle==true){//if user has released left click button
+				switch(mouseCommandState){
+				case Selecting://Selection Change
+					//pushBackSelection(&c_playerSelection,&s_playerUnits);
+					
+					grabOnScreenSelectedUnits(&s_playerUnits,&c_playerSelection);
+					printf("%d\n",c_playerSelection.size());
+					selectionDrawState=false;
+					break;
+				case Commanding:
+					CommandSelectionUnits(currentCommand,&c_playerSelection);
+					break;
+				}
+			}else{//if user has clicked left click button
+				if(mouseIsOnScreen()){
+					switch(mouseCommandState){
+					case Selecting:
+						c_clientSelectionShape.setSize(sf::Vector2f(0,0));
+						c_originalSelectPoint=sf::Mouse::getPosition(window);
+						updateSelection();
+						selectionDrawState=true;
+						break;
+					case Commanding:
+						CommandSelectionUnits(currentCommand,&c_playerSelection);
+						break;
+					}
+				}
+			}
+			leftMouseClickedLastCycle^=true;//Swaps leftMouseClickLastCycle state
+		}else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){//If Right mbutton clicked
+			CommandSelectionUnits(Move,&c_playerSelection);
+		}
+		
+		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)==true &&leftMouseClickedLastCycle==true && mouseCommandState==Selecting){//If the player is still holding down the left click button while selecting
+				updateSelection();
+		}
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -265,7 +317,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 	//http://www.sfml-dev.org/tutorials/2.1/graphics-vertex-array.php
-	std::vector<Unit *> c_playerSelection;
+	
 
 	for(unsigned int i=0;i<5;i++){
 		s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,668),sf::Color::Green,10));
@@ -277,16 +329,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Non Shifted Commands empty the list.
 	//Same with Unit Selection
 
-	DecisionState mouseCommandState = Selecting;//True if valid command key is pressed.
-	CommandEnum currentCommand;
-	bool leftMouseClickedLastCycle = false;//For box selection
+	mouseCommandState = Selecting;//True if valid command key is pressed.
+	
+	leftMouseClickedLastCycle = false;//For box selection
 
 	c_clientSelectionShape.setFillColor(sf::Color::Transparent);
 	c_clientSelectionShape.setOutlineThickness(3.0f);
 	c_clientSelectionShape.setOutlineColor(sf::Color::Black);
 	c_clientSelectionShape.setSize(sf::Vector2f(0.f,0.f));
 
-	bool selectionDrawState = false; //user is selecting if true
+	selectionDrawState = false; //user is selecting if true
 
 	//Click -> Size Box -> Unclick -> Collision Detect Box with Player Units
 	//if(shift){add pointers to those Units to Selection Vector}
@@ -351,44 +403,7 @@ int _tmain(int argc, _TCHAR* argv[])
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-		//IF MOUSE IS ON THE WINDOW
-		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)^leftMouseClickedLastCycle){//if Left Mouse Button state has changed since last cycle
-			if(leftMouseClickedLastCycle==true){//if user has released left click button
-				switch(mouseCommandState){
-				case Selecting://Selection Change
-					//pushBackSelection(&c_playerSelection,&s_playerUnits);
-					
-					grabOnScreenSelectedUnits(&s_playerUnits,&c_playerSelection);
-					printf("%d\n",c_playerSelection.size());
-					selectionDrawState=false;
-					break;
-				case Commanding:
-					CommandSelectionUnits(currentCommand,&c_playerSelection);
-					break;
-				}
-			}else{//if user has clicked left click button
-				if(mouseIsOnScreen()){
-					switch(mouseCommandState){
-					case Selecting:
-						c_clientSelectionShape.setSize(sf::Vector2f(0,0));
-						c_originalSelectPoint=sf::Mouse::getPosition(window);
-						updateSelection();
-						selectionDrawState=true;
-						break;
-					case Commanding:
-						CommandSelectionUnits(currentCommand,&c_playerSelection);
-						break;
-					}
-				}
-			}
-			leftMouseClickedLastCycle^=true;//Swaps leftMouseClickLastCycle state
-		}else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){//If Right mbutton clicked
-			CommandSelectionUnits(Move,&c_playerSelection);
-		}
-		
-		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)==true &&leftMouseClickedLastCycle==true && mouseCommandState==Selecting){//If the player is still holding down the left click button while selecting
-				updateSelection();
-		}
+		mouseLogic();
         window.clear();
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
