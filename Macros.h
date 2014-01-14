@@ -5,3 +5,4 @@
 #define STROKE_SIZE 4
 #define GAMEARRAYSIZE_MOCKUP 128
 #define TILE_SIZE 32
+#define FPS_COUNTER_UPDATE_TIME 0.5 //Seconds

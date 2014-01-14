@@ -5,8 +5,8 @@
 Tile::Tile(void)
 {
 }
-Tile::Tile(bool _open){
-	open=_open;
+Tile::Tile(bool isOpen){
+	open = isOpen;
 }
 
 Tile::~Tile(void)

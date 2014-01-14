@@ -6,6 +6,7 @@
 #include "Command.h"//Unit Commands
 #include "Tile.h"//Game Array Tile Class
 #include "Macros.h"//Macros TODO Make config system
+#include "fpsCounter.h"//FPS Counter
 
 //#define PLAYER_COLOR Color::Green
 //#define SELECTION_STROKE_COLOR sf::Color::Blue
@@ -191,12 +192,6 @@ void drawSelectionStroke(std::vector<Unit*>* c_playerSelection){
 		window.draw(strokeShape);
 	}
 }
-//void pushBackSelectionToControlGroup(std::vector<Unit *>* c_playerSelection,std::vector<Unit>* s_playerUnits){//for control groups
-//	for(unsigned int i=0;i<(*s_playerUnits).size();i++){
-//		if((*s_playerUnits)[i].position.x-(*s_playerUnits)[i].UnitShape.getRadius()>=
-//	}
-//		
-//}
 void setQuadPos(sf::Vertex * quad,const unsigned int i,const unsigned int j){
 	quad[0].position = sf::Vector2f(i * TILE_SIZE, j * TILE_SIZE);
     quad[1].position = sf::Vector2f((i + 1) * TILE_SIZE, j * TILE_SIZE);
@@ -209,16 +204,15 @@ void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j)
 	//	FALSE		TRUE
 	//0,0  32,0		32,0  64,0
 	//0,32 32,32	32,32 64,32
-
 	sf::Vector2f cordOrder[4]={ sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,0.0),
 								sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,0.0),
 								sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,TILE_SIZE),
 								sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,TILE_SIZE)
-	}
-	quad[0].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,0.0);				//TOP LEFT
-	quad[1].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,0.0);		//TOP RIGHT
-	quad[2].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,TILE_SIZE);	//BOTTOM RIGHT
-	quad[3].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,TILE_SIZE);		//BOTTOM LEFT
+	};
+	quad[0].texCoords = cordOrder[0];//TOP LEFT
+	quad[1].texCoords = cordOrder[1];//TOP RIGHT
+	quad[2].texCoords = cordOrder[2];//BOTTOM RIGHT
+	quad[3].texCoords = cordOrder[3];//BOTTOM LEFT
 	//if(gameLevel[i][j].open){
 		//printf("%s",gameLevel[i][j].open?"TRUE\n":"FALSE\n");
 		//printf("TOP LEFT %f %f\n",quad[0].texCoords.x,quad[0].texCoords.y);
@@ -228,15 +222,15 @@ void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j)
 		//printf("\n");
 	//}
 }
-void drawLevel(){
-	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
-		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
-			window.draw(gameLevel[i][j].tileSprite);
-		}
-	}
-}
+//void drawLevel(){ DEPRECATED FOR VERTEX ARRAY
+//	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
+//		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
+//			window.draw(gameLevel[i][j].tileSprite);
+//		}
+//	}
+//}
 void mouseLogic(){
-			//IF MOUSE IS ON THE WINDOW
+		//IF MOUSE IS ON THE WINDOW
 		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)^leftMouseClickedLastCycle){//if Left Mouse Button state has changed since last cycle
 			if(leftMouseClickedLastCycle==true){//if user has released left click button
 				switch(mouseCommandState){
@@ -284,41 +278,33 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Mockup naming conventions
 	//c_xxx for client side stuff
 	//s_xxx for game state that will be server side in the future
+	//Uppercase Snake Case for Macros. Example: ZERG_UNIT_SPEED
+	//Type names start with capital letter.
+	//Variable names are all lower case.
+	//Sensible naming for functions, have them reflect return signature.
 
 	//Game world is a large grid system
 	//Units have different shapes
 
+	//TODO Control Groups
 	//TODO MAKE Tile constructor
 	//TODO Discuss doing the fallout method of 3d.
 		//Make render, take isometric snapshots of it. Stick to SFML
+
 	printf("Texture Max Size: %d",sf::Texture().getMaximumSize());
 	sf::ContextSettings c_settings;
-	//c_settings.antialiasingLevel=8;
+	c_settings.antialiasingLevel=8;
 	
-	sf::Texture openTileTexture;
-	if(!openTileTexture.loadFromFile("mockupTileOpen.png")){
-		printf("Texture load failure");
-		getchar();
-		return -1;
-	}
-	sf::Texture closedTileTexture;
-	if(!closedTileTexture.loadFromFile("mockupTileClosed.png")){
-		printf("Texture load failure");
-		getchar();
-		return -1;
-	}
 	std::srand(time(NULL));
 	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
 		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
-			gameLevel[i][j].open=std::rand()%2+0;
+			gameLevel[i][j]=Tile(std::rand()%2+0);
 			//printf("%s\n",gameLevel[i][j].open?"TRUE":"FALSE");
-			gameLevel[i][j].tileSprite= gameLevel[i][j].open ? sf::Sprite(openTileTexture) : sf::Sprite(closedTileTexture);
-			gameLevel[i][j].tileSprite.setPosition(sf::Vector2f(i*32,j*32));
+			//gameLevel[i][j].tileSprite.setPosition(sf::Vector2f(i*32,j*32));
 		}
 	}
-	//http://www.sfml-dev.org/tutorials/2.1/graphics-vertex-array.php
-	
-
+	//TODO MAKE CLASS FOR GAME UNIT ADDITION TO TILE MANAGER
+	//Give tile int cords or on screen float approximations of the tile.
 	for(unsigned int i=0;i<5;i++){
 		s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,668),sf::Color::Green,10));
 	}
@@ -330,14 +316,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Same with Unit Selection
 
 	mouseCommandState = Selecting;//True if valid command key is pressed.
-	
 	leftMouseClickedLastCycle = false;//For box selection
 
 	c_clientSelectionShape.setFillColor(sf::Color::Transparent);
 	c_clientSelectionShape.setOutlineThickness(3.0f);
 	c_clientSelectionShape.setOutlineColor(sf::Color::Black);
 	c_clientSelectionShape.setSize(sf::Vector2f(0.f,0.f));
-
 	selectionDrawState = false; //user is selecting if true
 
 	//Click -> Size Box -> Unclick -> Collision Detect Box with Player Units
@@ -358,43 +342,28 @@ int _tmain(int argc, _TCHAR* argv[])
 		getchar();
 		return -1;
 	}
-
-	sf::Sprite testSprite(tileSetTexture,sf::IntRect(32,0,32,32));
-	testSprite.setPosition(40,40);
-
 	const int tileViewSizeX=window.getSize().x/TILE_SIZE;
 	const int tileViewSizeY=window.getSize().y/TILE_SIZE;
 	//printf("\nGame Tile Count: X: %d Y: %d\n",tileViewSizeX,tileViewSizeY);
-	sf::VertexArray tileSet(sf::Quads,4*tileViewSizeX*tileViewSizeY);
-
+	sf::VertexArray tileSet(sf::Quads,4*tileViewSizeX*tileViewSizeY);//http://www.sfml-dev.org/tutorials/2.1/graphics-vertex-array.php
 	sf::RenderStates tileSetStates;
 	tileSetStates.blendMode=sf::BlendNone;
 	tileSetStates.texture = &tileSetTexture;
 
-	for(unsigned int y=0;y<tileViewSizeY;y++){
-		for(unsigned int x=0;x<tileViewSizeX;x++){
-			tileSet[x+(y*4)].position=sf::Vector2f();
-			tileSet[x+(y*4)].texCoords=sf::Vector2f();
-		}
-	}
 	for (unsigned int i = 0; i < tileViewSizeX; ++i){
             for (unsigned int j = 0; j < tileViewSizeY; ++j){
 				// get a pointer to the current tile's quad
                 sf::Vertex* quad = &tileSet[(i + j * tileViewSizeX) * 4];
-
-                // define its 4 corners
-                setQuadPos(quad,i,j);
-                // define its 4 texture coordinates
-				setQuadTexture(quad,i,j);
-
-                //quad[0].texCoords = sf::Vector2f(gameLevel[i][j].open * tileViewSizeX, gameLevel[i][j].open * tileViewSizeY);
-                //quad[1].texCoords = sf::Vector2f((gameLevel[i][j].open + 1) * tileViewSizeX, gameLevel[i][j].open * tileViewSizeY);
-                //quad[2].texCoords = sf::Vector2f((gameLevel[i][j].open + 1) * tileViewSizeX, (gameLevel[i][j].open + 1) * tileViewSizeY);
-                //quad[3].texCoords = sf::Vector2f(gameLevel[i][j].open * tileViewSizeX, (gameLevel[i][j].open + 1) * tileViewSizeY);
+                setQuadPos(quad,i,j);	 // define its 4 corners
+				setQuadTexture(quad,i,j);// define its 4 texture coordinates
            }
 	}
+	sf::Font fontArial;
+	if(!fontArial.loadFromFile("arial.ttf")){
+		return -1;
+	}
+	fpsCounter theFPSCounter(fontArial);
 
-	sf::Clock myClock;
     while (window.isOpen())
     {
         sf::Event event;
@@ -411,24 +380,17 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		window.draw(tileSet,&tileSetTexture);
 		window.draw(tileSet,tileSetStates);
-		//drawLevel();
-
-		//window.draw(tileSet,&openTileTexture);
-		
-		
 		
 		drawSelectionStroke(&c_playerSelection);
 		drawUnitVector(&window,s_playerUnits);
 		drawUnitVector(&window,s_enemyUnits);
-		
-		//window.draw(grassTileSprite);
+
 		if(selectionDrawState==true){
 			window.draw(c_clientSelectionShape);
 		}
-		//window.draw(&tileSet[4],4,sf::Quads,tileSetStates);
-		
-		//window.draw(testSprite);
-		printf("\n%f\n",1/myClock.restart().asSeconds());
+
+		theFPSCounter.updateFPSCounter();
+		theFPSCounter.draw(&window);
         window.display();
 		
     }
