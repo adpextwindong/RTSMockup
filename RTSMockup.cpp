@@ -195,21 +195,32 @@ void setQuadPos(sf::Vertex * quad,const unsigned int i,const unsigned int j){
 }
 
 void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j){//TODO FIX THIS
-	if(gameLevel[i][j].open){
-		printf("TOP LEFT %d %d\n",(gameLevel[i][j].open) * TILE_SIZE,0);
-		printf("TOP RIGHT %d %d\n",(2*gameLevel[i][j].open) * TILE_SIZE,0);
-		printf("BOTTOM RIGHT %d %d\n",(2*gameLevel[i][j].open) * TILE_SIZE,TILE_SIZE);
-		printf("BOTTOM LEFT %d %d\n",(gameLevel[i][j].open) * TILE_SIZE,TILE_SIZE);
-		printf("\n");
-	}
+	printf("\n\n");
+	//	FALSE		TRUE
+	//0,0  32,0		32,0  64,0
+	//0,32 32,32	32,32 64,32
 	//TOP LEFT
-	quad[0].texCoords = sf::Vector2f((gameLevel[i][j].open) * TILE_SIZE,0);
+	quad[0].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,0.0);
+	printf("%f %f\n",(float)(gameLevel[i][j].open*TILE_SIZE)+0.0,(float) 0.0);
 	//TOP RIGHT
-	quad[1].texCoords = sf::Vector2f((2*gameLevel[i][j].open) * TILE_SIZE,0);
+	quad[1].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,0.0);
+	printf("%f %f\n",(float) (gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,(float) 0.0);
 	//BOTTOM RIGHT
-	quad[2].texCoords = sf::Vector2f((2*gameLevel[i][j].open) * TILE_SIZE,TILE_SIZE);
+	quad[2].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,TILE_SIZE);
+	printf("%f %f\n",(float) (gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,(float) TILE_SIZE);
 	//BOTTOM LEFT
-	quad[0].texCoords = sf::Vector2f((gameLevel[i][j].open) * TILE_SIZE,TILE_SIZE);
+	quad[3].texCoords = sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,TILE_SIZE);
+	printf("%f %f\n",(float) (gameLevel[i][j].open*TILE_SIZE)+0.0,(float) TILE_SIZE);
+	
+	//if(gameLevel[i][j].open){
+		printf("%s",gameLevel[i][j].open?"TRUE\n":"FALSE\n");
+		printf("TOP LEFT %f %f\n",quad[0].texCoords.x,quad[0].texCoords.y);
+		printf("TOP RIGHT %f %f\n",quad[1].texCoords.x,quad[1].texCoords.y);
+		printf("BOTTOM RIGHT %f %f\n",quad[2].texCoords.x,quad[2].texCoords.y);
+		printf("BOTTOM LEFT %f %f\n",quad[3].texCoords.x,quad[3].texCoords.y);
+		printf("\n");
+	//}
+
 }
 void drawLevel(){
 	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
@@ -337,16 +348,7 @@ int _tmain(int argc, _TCHAR* argv[])
            }
 	}
 
-	//tileSet[0].position=sf::Vector2f(0,0);
-	//tileSet[1].position=sf::Vector2f(16,0);
-	//tileSet[2].position=sf::Vector2f(16,16);
-	//tileSet[3].position=sf::Vector2f(0,16);
-
-	//tileSet[0].texCoords=sf::Vector2f(1,1);
-	//tileSet[1].texCoords=sf::Vector2f(17,1);
-	//tileSet[2].texCoords=sf::Vector2f(17,17);
-	//tileSet[3].texCoords=sf::Vector2f(1,17);
-
+	sf::Clock myClock;
     while (window.isOpen())
     {
         sf::Event event;
@@ -398,7 +400,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
 		window.draw(background);
 
-		
+		window.draw(tileSet,&tileSetTexture);
+		window.draw(tileSet,tileSetStates);
 		//drawLevel();
 
 		//window.draw(tileSet,&openTileTexture);
@@ -414,9 +417,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			window.draw(c_clientSelectionShape);
 		}
 		//window.draw(&tileSet[4],4,sf::Quads,tileSetStates);
-		//window.draw(tileSet,tileSetStates);
-		window.draw(testSprite);
-
+		
+		//window.draw(testSprite);
+		printf("\n%f\n",1/myClock.restart().asSeconds());
         window.display();
 		
     }
