@@ -1,5 +1,5 @@
 // RTSMockup.cpp : Defines the entry point for the console application.
-#include "stdafx.h"
+#include "stdafx.h"//VS2010 Requirement
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Unit.h"//Unit Object Class
@@ -8,52 +8,45 @@
 #include "Macros.h"//Macros TODO Make config system
 #include "fpsCounter.h"//FPS Counter
 
-//#define PLAYER_COLOR Color::Green
-//#define SELECTION_STROKE_COLOR sf::Color::Blue
-//#define STROKE_SIZE 4
-//#define GAMEARRAYSIZE_MOCKUP 128
-//#define TILE_SIZE 32
-
 enum DecisionState {Selecting,Commanding};
- 
-sf::RectangleShape c_clientSelectionShape;
-sf::Vector2i c_originalSelectPoint;//SELECT LEFT CLICK POINT
-sf::RenderWindow window(sf::VideoMode(1024, 768), "RTS Mockup");
+
 std::vector<Unit> s_playerUnits;
 std::vector<Unit> s_enemyUnits;
-Tile gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];//game level
+Tile s_gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];//game level
 
-
+sf::RectangleShape c_clientSelectionShape;
+sf::Vector2i c_originalSelectPoint;//SELECT LEFT CLICK POINT
+sf::RenderWindow c_window(sf::VideoMode(1024, 768), "RTS Mockup");
 
 //Mouse Selection & Commanding
 std::vector<Unit *> c_playerSelection;
-CommandEnum currentCommand;
+CommandEnum c_currentCommand;
 //Mouse Logic Variables
-bool leftMouseClickedLastCycle;
-DecisionState mouseCommandState;
-bool selectionDrawState;
+bool c_leftMouseClickedLastCycle;
+DecisionState c_mouseCommandState;
+bool c_selectionDrawState;
 
-void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//draws all the units in a unit list
-	for(unsigned int i=0;i<list.size();i++){
-		(*window).draw(list[i].UnitShape);
+void drawUnitVector(sf::RenderWindow * c_window,std::vector<Unit>* list){//draws all the units in a unit list
+	for(unsigned int i=0;i<list->size();i++){
+		(*c_window).draw((*list)[i].UnitShape);
 	}
 	
 }
 
 void updateSelection(){
-	sf::Vector2i LimitedMousePos = sf::Mouse::getPosition(window);
-	if(LimitedMousePos.x<0 || LimitedMousePos.x > window.getSize().x){//if 
+	sf::Vector2i LimitedMousePos = sf::Mouse::getPosition(c_window);
+	if(LimitedMousePos.x<0 || LimitedMousePos.x > c_window.getSize().x){//if 
 		if(LimitedMousePos.x<0){
 			LimitedMousePos.x=0;
 		}else{
-			LimitedMousePos.x=window.getSize().x;
+			LimitedMousePos.x=c_window.getSize().x;
 		}
 	}
-	if(LimitedMousePos.y<0 || LimitedMousePos.y > window.getSize().y){//if 
+	if(LimitedMousePos.y<0 || LimitedMousePos.y > c_window.getSize().y){//if 
 		if(LimitedMousePos.y<0){
 			LimitedMousePos.y=0;
 		}else{
-			LimitedMousePos.y=window.getSize().y;
+			LimitedMousePos.y=c_window.getSize().y;
 		}
 	}
 	int yDiff=(LimitedMousePos.y-c_originalSelectPoint.y);
@@ -81,11 +74,10 @@ void updateSelection(){
 	//printf("\n\n");
 
 	//printf("Limited MosPos %d %d ",LimitedMousePos.x,LimitedMousePos.y);
-	//printf("Real MosPos %d %d\n",sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y);
+	//printf("Real MosPos %d %d\n",sf::Mouse::getPosition(c_window).x,sf::Mouse::getPosition(c_window).y);
 	/*printf("Original Point %d %d ",c_originalSelectPoint.x,c_originalSelectPoint.y);
 	printf("Selection Cords %f.0 %f.0\n\n",c_clientSelectionShape.getPosition().x,c_clientSelectionShape.getPosition().y);*/
 }
-unsigned int counter=0;
 void grabOnScreenSelectedUnits(std::vector<Unit>* s_playerUnits,std::vector<Unit *>* c_playerSelection){
 	bool shifted = false;
 	unsigned int preExistingElemCount=0;
@@ -134,7 +126,7 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* s_playerUnits,std::vector<Unit
 				}
 			}else{
 				radius=(*s_playerUnits)[unitIterator].UnitShape.getRadius()/2;
-				sf::Vector2f position((*s_playerUnits)[unitIterator].position.x,(*s_playerUnits)[unitIterator].position.y);
+				sf::Vector2f position((*s_playerUnits)[unitIterator].UnitShape.getPosition().x,(*s_playerUnits)[unitIterator].UnitShape.getPosition().y);
 				if(position.x >= minX && position.x <= maxX){
 					if(position.y >= minY && position.y <= maxY){
 						(*c_playerSelection).push_back(&(*s_playerUnits)[unitIterator]);
@@ -167,15 +159,15 @@ void CommandSelectionUnits(CommandEnum theCommand, std::vector<Unit *> * c_playe
 			(*(*c_playerSelection)[i]).unitCommands.empty();
 		}
 		printf("Shifted %S Command",commandString(theCommand));
-		(*(*c_playerSelection)[i]).unitCommands.push_back(Command(theCommand,Point2D(sf::Mouse::getPosition(window)),unitAtMousePos()));
+		(*(*c_playerSelection)[i]).unitCommands.push_back(Command(theCommand,Point2D(sf::Mouse::getPosition(c_window)),unitAtMousePos()));
 	}
 }
 
 
 bool mouseIsOnScreen(){
-	//printf("%d %d\n",sf::Mouse::getPosition(window).x,sf::Mouse::getPosition(window).y);
-	if((sf::Mouse::getPosition().x-window.getPosition().x >0) && (sf::Mouse::getPosition(window).x <=window.getSize().x)){
-		if((sf::Mouse::getPosition().y-window.getPosition().y >0) && (sf::Mouse::getPosition(window).y <=window.getSize().y)){
+	//printf("%d %d\n",sf::Mouse::getPosition(c_window).x,sf::Mouse::getPosition(c_window).y);
+	if((sf::Mouse::getPosition().x-c_window.getPosition().x >0) && (sf::Mouse::getPosition(c_window).x <=c_window.getSize().x)){
+		if((sf::Mouse::getPosition().y-c_window.getPosition().y >0) && (sf::Mouse::getPosition(c_window).y <=c_window.getSize().y)){
 			//printf("\nOnscreen\n");
 			return true;
 		}
@@ -189,7 +181,7 @@ void drawSelectionStroke(std::vector<Unit*>* c_playerSelection){
 	for(unsigned int i=0;i<(*c_playerSelection).size();i++){
 		strokeShape.setRadius((*(*c_playerSelection)[i]).UnitShape.getRadius()+STROKE_SIZE);
 		strokeShape.setPosition((*(*c_playerSelection)[i]).UnitShape.getPosition().x-STROKE_SIZE,(*(*c_playerSelection)[i]).UnitShape.getPosition().y-STROKE_SIZE);
-		window.draw(strokeShape);
+		c_window.draw(strokeShape);
 	}
 }
 void setQuadPos(sf::Vertex * quad,const unsigned int i,const unsigned int j){
@@ -204,17 +196,17 @@ void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j)
 	//	FALSE		TRUE
 	//0,0  32,0		32,0  64,0
 	//0,32 32,32	32,32 64,32
-	sf::Vector2f cordOrder[4]={ sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,0.0),
-								sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,0.0),
-								sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,TILE_SIZE),
-								sf::Vector2f((gameLevel[i][j].open*TILE_SIZE)+0.0,TILE_SIZE)
+	sf::Vector2f cordOrder[4]={ sf::Vector2f((s_gameLevel[i][j].open*TILE_SIZE)+0.0,0.0),
+								sf::Vector2f((s_gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,0.0),
+								sf::Vector2f((s_gameLevel[i][j].open*TILE_SIZE)+TILE_SIZE,TILE_SIZE),
+								sf::Vector2f((s_gameLevel[i][j].open*TILE_SIZE)+0.0,TILE_SIZE)
 	};
 	quad[0].texCoords = cordOrder[0];//TOP LEFT
 	quad[1].texCoords = cordOrder[1];//TOP RIGHT
 	quad[2].texCoords = cordOrder[2];//BOTTOM RIGHT
 	quad[3].texCoords = cordOrder[3];//BOTTOM LEFT
-	//if(gameLevel[i][j].open){
-		//printf("%s",gameLevel[i][j].open?"TRUE\n":"FALSE\n");
+	//if(s_gameLevel[i][j].open){
+		//printf("%s",s_gameLevel[i][j].open?"TRUE\n":"FALSE\n");
 		//printf("TOP LEFT %f %f\n",quad[0].texCoords.x,quad[0].texCoords.y);
 		//printf("TOP RIGHT %f %f\n",quad[1].texCoords.x,quad[1].texCoords.y);
 		//printf("BOTTOM RIGHT %f %f\n",quad[2].texCoords.x,quad[2].texCoords.y);
@@ -225,47 +217,47 @@ void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j)
 //void drawLevel(){ DEPRECATED FOR VERTEX ARRAY
 //	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
 //		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
-//			window.draw(gameLevel[i][j].tileSprite);
+//			c_window.draw(s_gameLevel[i][j].tileSprite);
 //		}
 //	}
 //}
 void mouseLogic(){
-		//IF MOUSE IS ON THE WINDOW
-		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)^leftMouseClickedLastCycle){//if Left Mouse Button state has changed since last cycle
-			if(leftMouseClickedLastCycle==true){//if user has released left click button
-				switch(mouseCommandState){
+		//IF MOUSE IS ON THE c_window
+		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)^c_leftMouseClickedLastCycle){//if Left Mouse Button state has changed since last cycle
+			if(c_leftMouseClickedLastCycle==true){//if user has released left click button
+				switch(c_mouseCommandState){
 				case Selecting://Selection Change
 					//pushBackSelection(&c_playerSelection,&s_playerUnits);
 					
 					grabOnScreenSelectedUnits(&s_playerUnits,&c_playerSelection);
 					printf("%d\n",c_playerSelection.size());
-					selectionDrawState=false;
+					c_selectionDrawState=false;
 					break;
 				case Commanding:
-					CommandSelectionUnits(currentCommand,&c_playerSelection);
+					CommandSelectionUnits(c_currentCommand,&c_playerSelection);
 					break;
 				}
 			}else{//if user has clicked left click button
 				if(mouseIsOnScreen()){
-					switch(mouseCommandState){
+					switch(c_mouseCommandState){
 					case Selecting:
 						c_clientSelectionShape.setSize(sf::Vector2f(0,0));
-						c_originalSelectPoint=sf::Mouse::getPosition(window);
+						c_originalSelectPoint=sf::Mouse::getPosition(c_window);
 						updateSelection();
-						selectionDrawState=true;
+						c_selectionDrawState=true;
 						break;
 					case Commanding:
-						CommandSelectionUnits(currentCommand,&c_playerSelection);
+						CommandSelectionUnits(c_currentCommand,&c_playerSelection);
 						break;
 					}
 				}
 			}
-			leftMouseClickedLastCycle^=true;//Swaps leftMouseClickLastCycle state
+			c_leftMouseClickedLastCycle^=true;//Swaps leftMouseClickLastCycle state
 		}else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){//If Right mbutton clicked
 			CommandSelectionUnits(Move,&c_playerSelection);
 		}
 		
-		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)==true &&leftMouseClickedLastCycle==true && mouseCommandState==Selecting){//If the player is still holding down the left click button while selecting
+		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)==true &&c_leftMouseClickedLastCycle==true && c_mouseCommandState==Selecting){//If the player is still holding down the left click button while selecting
 				updateSelection();
 		}
 }
@@ -298,13 +290,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::srand(time(NULL));
 	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
 		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
-			gameLevel[i][j]=Tile(std::rand()%2+0);
-			//printf("%s\n",gameLevel[i][j].open?"TRUE":"FALSE");
-			//gameLevel[i][j].tileSprite.setPosition(sf::Vector2f(i*32,j*32));
+			s_gameLevel[i][j]=Tile(std::rand()%2+0);
 		}
 	}
 	//TODO MAKE CLASS FOR GAME UNIT ADDITION TO TILE MANAGER
 	//Give tile int cords or on screen float approximations of the tile.
+	
+
+
 	for(unsigned int i=0;i<5;i++){
 		s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,668),sf::Color::Green,10));
 	}
@@ -315,14 +308,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Non Shifted Commands empty the list.
 	//Same with Unit Selection
 
-	mouseCommandState = Selecting;//True if valid command key is pressed.
-	leftMouseClickedLastCycle = false;//For box selection
+	c_mouseCommandState = Selecting;//True if valid command key is pressed.
+	c_leftMouseClickedLastCycle = false;//For box selection
 
 	c_clientSelectionShape.setFillColor(sf::Color::Transparent);
 	c_clientSelectionShape.setOutlineThickness(3.0f);
 	c_clientSelectionShape.setOutlineColor(sf::Color::Black);
 	c_clientSelectionShape.setSize(sf::Vector2f(0.f,0.f));
-	selectionDrawState = false; //user is selecting if true
+	c_selectionDrawState = false; //user is selecting if true
 
 	//Click -> Size Box -> Unclick -> Collision Detect Box with Player Units
 	//if(shift){add pointers to those Units to Selection Vector}
@@ -333,7 +326,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//LEFT CLICK DOES TWO THINGS. SELECTION AND COMMANDING
 	//RIGHT CLICK ONLY DOES MOVE COMMAND
 
-	sf::RectangleShape background(sf::Vector2f(window.getSize().x,window.getSize().y));
+	sf::RectangleShape background(sf::Vector2f(c_window.getSize().x,c_window.getSize().y));
 	background.setFillColor(sf::Color::White);
 
 	sf::Texture tileSetTexture;
@@ -342,8 +335,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		getchar();
 		return -1;
 	}
-	const int tileViewSizeX=window.getSize().x/TILE_SIZE;
-	const int tileViewSizeY=window.getSize().y/TILE_SIZE;
+	const int tileViewSizeX=c_window.getSize().x/TILE_SIZE;
+	const int tileViewSizeY=c_window.getSize().y/TILE_SIZE;
 	//printf("\nGame Tile Count: X: %d Y: %d\n",tileViewSizeX,tileViewSizeY);
 	sf::VertexArray tileSet(sf::Quads,4*tileViewSizeX*tileViewSizeY);//http://www.sfml-dev.org/tutorials/2.1/graphics-vertex-array.php
 	sf::RenderStates tileSetStates;
@@ -352,46 +345,46 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	for (unsigned int i = 0; i < tileViewSizeX; ++i){
             for (unsigned int j = 0; j < tileViewSizeY; ++j){
-				// get a pointer to the current tile's quad
-                sf::Vertex* quad = &tileSet[(i + j * tileViewSizeX) * 4];
+                sf::Vertex* quad = &tileSet[(i + j * tileViewSizeX) * 4];// get a pointer to the current tile's quad
                 setQuadPos(quad,i,j);	 // define its 4 corners
 				setQuadTexture(quad,i,j);// define its 4 texture coordinates
            }
 	}
+
 	sf::Font fontArial;
 	if(!fontArial.loadFromFile("arial.ttf")){
 		return -1;
 	}
-	fpsCounter theFPSCounter(fontArial);
 
-    while (window.isOpen())
+	fpsCounter theFPSCounter(fontArial);
+    while (c_window.isOpen())
     {
         sf::Event event;
-        while (window.pollEvent(event))
+        while (c_window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
-                window.close();
+                c_window.close();
         }
 		mouseLogic();
-        window.clear();
+        c_window.clear();
 
-		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
-		window.draw(background);
+		//printf("%s",c_selectionDrawState?"TRUE\n":"FALSE\n");
+		c_window.draw(background);
 
-		window.draw(tileSet,&tileSetTexture);
-		window.draw(tileSet,tileSetStates);
+		c_window.draw(tileSet,&tileSetTexture);
+		c_window.draw(tileSet,tileSetStates);
 		
 		drawSelectionStroke(&c_playerSelection);
-		drawUnitVector(&window,s_playerUnits);
-		drawUnitVector(&window,s_enemyUnits);
+		drawUnitVector(&c_window,s_playerUnits);
+		drawUnitVector(&c_window,s_enemyUnits);
 
-		if(selectionDrawState==true){
-			window.draw(c_clientSelectionShape);
+		if(c_selectionDrawState==true){
+			c_window.draw(c_clientSelectionShape);
 		}
 
 		theFPSCounter.updateFPSCounter();
-		theFPSCounter.draw(&window);
-        window.display();
+		theFPSCounter.draw(&c_window);
+        c_window.display();
 		
     }
 

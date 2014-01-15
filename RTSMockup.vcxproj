@@ -81,11 +81,14 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="fpsCounter.h" />
     <ClInclude Include="Macros.h" />
-    <ClInclude Include="Point2D.h" />
+    <ClInclude Include="Point2D.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Unit.h" />
+    <ClInclude Include="unitManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aStarTestMain.cpp">
@@ -93,7 +96,9 @@
     </ClCompile>
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="fpsCounter.cpp" />
-    <ClCompile Include="Point2D.cpp" />
+    <ClCompile Include="Point2D.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="RTSMockup.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -101,6 +106,7 @@
     </ClCompile>
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Unit.cpp" />
+    <ClCompile Include="unitManager.cpp" />
     <ClCompile Include="vertexArrayMainTest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
