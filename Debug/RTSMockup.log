@@ -1,74 +1,57 @@
-﻿Build started 1/15/2014 9:33:41 AM.
+﻿Build started 1/16/2014 9:09:50 AM.
      1>Project "C:\Users\George\Documents\GitHub\RTSMockup\RTSMockup.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Touching "Debug\RTSMockup.unsuccessfulbuild".
        ClCompile:
          All outputs are up-to-date.
-         c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\SFML21VS2010\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\RTSMockup.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Command.cpp RTSMockup.cpp Tile.cpp Unit.cpp unitManager.cpp
+         c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\SFML21VS2010\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\RTSMockup.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt RTSMockup.cpp unitManager.cpp
          unitManager.cpp
-         Unit.cpp
-     1>c:\users\george\documents\github\rtsmockup\unit.cpp(10): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\unit.cpp(11): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\unit.cpp(11): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\unitmanager.cpp(8): error C2440: '=' : cannot convert from 'Tile *[][128]' to 'Tile *[128][128]'
+                 There are no conversions to array types, although there are conversions to references or pointers to arrays
          RTSMockup.cpp
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(38): warning C4018: '>' : signed/unsigned mismatch
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(45): warning C4018: '>' : signed/unsigned mismatch
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(55): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(55): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(39): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(46): warning C4018: '>' : signed/unsigned mismatch
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(56): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(56): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(58): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(58): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(63): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(63): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(65): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(65): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(57): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(57): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(59): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(59): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(64): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(64): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(66): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(66): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(169): warning C4018: '<=' : signed/unsigned mismatch
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(67): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(67): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(170): warning C4018: '<=' : signed/unsigned mismatch
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(188): warning C4244: 'argument' : conversion from 'const unsigned int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(188): warning C4244: 'argument' : conversion from 'const unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(171): warning C4018: '<=' : signed/unsigned mismatch
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(189): warning C4244: 'argument' : conversion from 'const unsigned int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(189): warning C4244: 'argument' : conversion from 'const unsigned int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(190): warning C4244: 'argument' : conversion from 'const unsigned int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(190): warning C4244: 'argument' : conversion from 'const unsigned int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(191): warning C4244: 'argument' : conversion from 'const unsigned int' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(191): warning C4244: 'argument' : conversion from 'const unsigned int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(199): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(200): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(192): warning C4244: 'argument' : conversion from 'const unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(192): warning C4244: 'argument' : conversion from 'const unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(200): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
      1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(201): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(202): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(290): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(293): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(300): error C2665: 'Unit::Unit' : none of the 2 overloads could convert all the argument types
-                 c:\users\george\documents\github\rtsmockup\unit.h(18): could be 'Unit::Unit(sf::Vector2i,sf::Color,double)'
-                 while trying to match the argument list '(Point2D, const sf::Color, int)'
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(303): error C2665: 'Unit::Unit' : none of the 2 overloads could convert all the argument types
-                 c:\users\george\documents\github\rtsmockup\unit.h(18): could be 'Unit::Unit(sf::Vector2i,sf::Color,double)'
-                 while trying to match the argument list '(Point2D, const sf::Color, int)'
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(327): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(327): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(344): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(345): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(376): error C2664: 'drawUnitVector' : cannot convert parameter 2 from 'std::vector<_Ty>' to 'std::vector<_Ty> *'
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(202): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(203): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(291): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(294): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(300): error C2664: 'unitManager::unitManager(std::vector<_Ty> *,std::vector<_Ty> *,Tile *[][128])' : cannot convert parameter 3 from 'Tile (*)[128][128]' to 'Tile *[][128]'
                  with
                  [
                      _Ty=Unit
                  ]
-                 No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(377): error C2664: 'drawUnitVector' : cannot convert parameter 2 from 'std::vector<_Ty>' to 'std::vector<_Ty> *'
-                 with
-                 [
-                     _Ty=Unit
-                 ]
-                 No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+                 Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(329): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(329): warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(346): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\george\documents\github\rtsmockup\rtsmockup.cpp(347): warning C4018: '<' : signed/unsigned mismatch
          Generating Code...
-         Skipping... (no relevant changes detected)
-         Tile.cpp
-         Command.cpp
      1>Done Building Project "C:\Users\George\Documents\GitHub\RTSMockup\RTSMockup.vcxproj" (build target(s)) -- FAILED.
 
 Build FAILED.
 
-Time Elapsed 00:00:04.26
+Time Elapsed 00:00:01.70

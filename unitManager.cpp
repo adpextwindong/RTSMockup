@@ -2,11 +2,12 @@
 #include "unitManager.h"
 
 
-unitManager::unitManager(void)
-{
-}
+unitManager::unitManager(std::vector<Unit> * thePlayerUnitList,std::vector<Unit> * theEnemyUnitList,Tile * theGameLevel){
 
-
-unitManager::~unitManager(void)
-{
 }
+void unitManager::addUnit(bool playerUnit,int x,int y,double size){
+
+}
+//unitManager::unitManager(std::vector<Unit> * testList,std::vector<Unit> * testList2){
+//
+//}

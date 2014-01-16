@@ -7,6 +7,7 @@
 #include "Tile.h"//Game Array Tile Class
 #include "Macros.h"//Macros TODO Make config system
 #include "fpsCounter.h"//FPS Counter
+#include "unitManager.h"
 
 enum DecisionState {Selecting,Commanding};
 
@@ -296,14 +297,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TODO MAKE CLASS FOR GAME UNIT ADDITION TO TILE MANAGER
 	//Give tile int cords or on screen float approximations of the tile.
 	
-
-
-	for(unsigned int i=0;i<5;i++){
-		s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,668),sf::Color::Green,10));
-	}
-	for(unsigned int i=0;i<3;i++){
-		s_enemyUnits.push_back(Unit(Point2D((i+1)*150+180,100),sf::Color::Red,20));
-	}
+	unitManager theUnitManager(&s_playerUnits,&s_enemyUnits,&s_gameLevel[0][0]);
+	//for(unsigned int i=0;i<5;i++){
+	//	s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,668),sf::Color::Green,10));
+	//}
+	//for(unsigned int i=0;i<3;i++){
+	//	s_enemyUnits.push_back(Unit(Point2D((i+1)*150+180,100),sf::Color::Red,20));
+	//}
 	//Allows the player to queue up commands.
 	//Non Shifted Commands empty the list.
 	//Same with Unit Selection
@@ -375,8 +375,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		c_window.draw(tileSet,tileSetStates);
 		
 		drawSelectionStroke(&c_playerSelection);
-		drawUnitVector(&c_window,s_playerUnits);
-		drawUnitVector(&c_window,s_enemyUnits);
+		drawUnitVector(&c_window,&s_playerUnits);
+		drawUnitVector(&c_window,&s_enemyUnits);
 
 		if(c_selectionDrawState==true){
 			c_window.draw(c_clientSelectionShape);
