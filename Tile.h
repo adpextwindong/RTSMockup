@@ -11,4 +11,3 @@ public:
 	Tile(bool open);
 	~Tile(void);
 };
-

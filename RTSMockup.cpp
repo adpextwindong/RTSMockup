@@ -18,6 +18,7 @@ Tile s_gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];//game level
 sf::RectangleShape c_clientSelectionShape;
 sf::Vector2i c_originalSelectPoint;//SELECT LEFT CLICK POINT
 sf::RenderWindow c_window(sf::VideoMode(1024, 768), "RTS Mockup");
+sf::Vector2f c_viewPosition;//Used for scrolling the screen around.
 
 //Mouse Selection & Commanding
 std::vector<Unit *> c_playerSelection;
@@ -297,7 +298,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TODO MAKE CLASS FOR GAME UNIT ADDITION TO TILE MANAGER
 	//Give tile int cords or on screen float approximations of the tile.
 	
-	unitManager theUnitManager(&s_playerUnits,&s_enemyUnits,&s_gameLevel[0][0]);
+	unitManager theUnitManager(&s_playerUnits,&s_enemyUnits,&c_viewPosition,s_gameLevel);
 	//for(unsigned int i=0;i<5;i++){
 	//	s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,668),sf::Color::Green,10));
 	//}
