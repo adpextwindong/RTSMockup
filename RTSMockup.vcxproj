@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Command.h" />
+    <ClInclude Include="DrawHandler.h" />
     <ClInclude Include="fpsCounter.h" />
     <ClInclude Include="Macros.h" />
     <ClInclude Include="Point2D.h" />
@@ -93,6 +94,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Command.cpp" />
+    <ClCompile Include="DrawHandler.cpp" />
     <ClCompile Include="fpsCounter.cpp" />
     <ClCompile Include="Point2D.cpp" />
     <ClCompile Include="RTSMockup.cpp" />

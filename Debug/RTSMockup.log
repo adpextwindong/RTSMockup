@@ -1,10 +1,11 @@
-﻿Build started 1/28/2014 9:08:18 AM.
+﻿Build started 2/3/2014 8:21:49 AM.
      1>Project "C:\Users\George\Documents\GitHub\RTSMockup\RTSMockup.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Touching "Debug\RTSMockup.unsuccessfulbuild".
+         Creating "Debug\RTSMockup.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
          All outputs are up-to-date.
-         All outputs are up-to-date.
+         c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\SFML21VS2010\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\RTSMockup.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt tileArrayTestMain.cpp
+         tileArrayTestMain.cpp
        ManifestResourceCompile:
          All outputs are up-to-date.
        Link:
@@ -15,6 +16,7 @@
          Debug\RTSMockup.obj
          Debug\stdafx.obj
          Debug\Tile.obj
+         Debug\tileArrayTestMain.obj
          Debug\Unit.obj
          Debug\unitManager.obj
        Manifest:
@@ -30,4 +32,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.21
+Time Elapsed 00:00:02.52

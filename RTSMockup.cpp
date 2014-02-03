@@ -7,7 +7,8 @@
 #include "Tile.h"//Game Array Tile Class
 #include "Macros.h"//Macros TODO Make config system
 #include "fpsCounter.h"//FPS Counter
-#include "unitManager.h"
+#include "unitManager.h"//Unit Manager Singleton TODO Wrap singleton classes into a clientInstance class for the client
+#include "DrawHandler.h"//Client Draw Handler Singleton
 
 enum DecisionState {Selecting,Commanding};
 
@@ -150,7 +151,7 @@ char * commandString(CommandEnum theCommand){
 		return "Stop";
 	}
 }
-Unit * unitAtMousePos(){//TODO: FINISH THIS FUNCTION
+Unit * unitAtMousePos(){//TODO:Graphically search for top most unit at that mouse position
 	//check for target unit at mouse posisiton
 	return NULL;
 }
@@ -358,6 +359,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	fpsCounter theFPSCounter(fontArial);
+
+	DrawHandler c_clientDrawHandler;//Put all c_ITEMS with draw calls into the draw handler
     while (c_window.isOpen())
     {
         sf::Event event;
@@ -366,7 +369,7 @@ int _tmain(int argc, _TCHAR* argv[])
             if (event.type == sf::Event::Closed)
                 c_window.close();
         }
-		mouseLogic();
+		mouseLogic();//Ensure this can be put in client class
         c_window.clear();
 
 		//printf("%s",c_selectionDrawState?"TRUE\n":"FALSE\n");
