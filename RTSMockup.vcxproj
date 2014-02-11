@@ -103,7 +103,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Tile.cpp" />
-    <ClCompile Include="tileArrayTestMain.cpp" />
+    <ClCompile Include="tileArrayTestMain.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="unitManager.cpp" />
     <ClCompile Include="vertexArrayMainTest.cpp">

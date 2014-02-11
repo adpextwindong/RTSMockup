@@ -266,6 +266,10 @@ void mouseLogic(){
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
+	//Client samples input per tick
+		//Buffers input 
+	//Server simulates gameworld per tick
+
 	//Cheat protection:
 	//Encrypt packets
 	//or use Base64 and obsfuscate
