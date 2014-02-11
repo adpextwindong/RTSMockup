@@ -9,3 +9,12 @@
 #define FPS_COUNTER_UPDATE_TIME 0.5 //Seconds
 
 enum Team{Green,Red};
+
+sf::Color returnColor(Team param){
+	switch(param){
+	case Green:
+		return sf::Color::Green;
+	case Red:
+		return sf::Color::Red;
+	}
+}
