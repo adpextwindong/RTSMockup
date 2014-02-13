@@ -17,7 +17,7 @@ class Unit
 		
 		std::vector<Command> unitCommands;//queue for Players Commands
 		
-		Unit::Unit(sf::Vector2i posistion,sf::Color color,double size);
+		Unit::Unit(sf::Vector2i _posistion,Team teamParam,unsigned char _size);
 		~Unit(void);
 		bool Unit::Move(enum adjacentDirection direction);//Moves Unit
 };
