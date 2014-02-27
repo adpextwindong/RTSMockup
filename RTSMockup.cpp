@@ -151,8 +151,37 @@ char * commandString(CommandEnum theCommand){
 		return "Stop";
 	}
 }
-Unit * unitAtMousePos(){//TODO:Graphically search for top most unit at that mouse position
+Unit * unitAtMousePos(){//TODO: FINISH THIS FUNCTION
 	//check for target unit at mouse posisiton
+	for(unsigned int i=0;i<s_playerUnits.size();i++){
+		float radius = s_playerUnits[i].UnitShape.getRadius();
+
+		float unitPosx = s_playerUnits[i].UnitShape.getPosition().x + radius;
+		float unitPosy = s_playerUnits[i].UnitShape.getPosition().y + radius;
+
+		float mousPosx = sf::Mouse::getPosition(c_window).x;
+		float mousPosy = sf::Mouse::getPosition(c_window).y;
+
+		float distance = sqrt(pow((unitPosx-mousPosx),2)+pow((unitPosy-mousPosy),2));
+		if(distance<=radius){
+			printf("%d",&s_playerUnits[i]);
+			return &s_playerUnits[i];
+		}
+	}
+
+	for(unsigned int i=0;i<s_enemyUnits.size();i++){
+		float radius = s_enemyUnits[i].UnitShape.getRadius();
+		float unitPosx = s_enemyUnits[i].UnitShape.getPosition().x + radius;
+		float unitPosy = s_enemyUnits[i].UnitShape.getPosition().y + radius;
+		float mousPosx = sf::Mouse::getPosition(c_window).x;
+		float mousPosy = sf::Mouse::getPosition(c_window).y;
+
+		float distance = sqrt(pow((unitPosx-mousPosx),2)+pow((unitPosy-mousPosy),2));
+		if(distance<=radius){
+			return &s_enemyUnits[i];
+		}
+	}
+	
 	return NULL;
 }
 void CommandSelectionUnits(CommandEnum theCommand, std::vector<Unit *> * c_playerSelection){
@@ -194,7 +223,7 @@ void setQuadPos(sf::Vertex * quad,const unsigned int i,const unsigned int j){
     quad[3].position = sf::Vector2f(i * TILE_SIZE, (j + 1) * TILE_SIZE);
 }
 
-void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j){//TODO FIX THIS
+void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j){//TODO MAKE TILESHEET IMPLEMENTATION
 	printf("\n\n");
 	//	FALSE		TRUE
 	//0,0  32,0		32,0  64,0

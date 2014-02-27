@@ -1,12 +1,16 @@
+#include "stdafx.h"//VS2010 Requirement
+#include "Macros.h"
+
+
 enum Directions {Up,Down,Left,DLeft,DULeft,Right,DRight,DURight};
 	
 unsigned int currentx,currenty,targetx,targety=0;
 int tf,tg,th,ti,tx,ty,f,g,h=0;
 
-vector<enum Directions> dir; 
+std::vector<enum Directions> dir; 
 
-boolean openarray[][]={};
-boolean closedarray[][]={};
+bool openarray[][];
+bool closedarray[][];
 
 void Astar()
 {
@@ -74,7 +78,7 @@ void Astar()
 		currenty=ty;
 }
 
-int main()
+int _tmain(int argc, _TCHAR* argv[])
 {
 
 	while(currentx!=targetx&&currenty!=targety)
