@@ -6,6 +6,11 @@
 #include "Unit.h"
 #include "Point2D.h"
 #include "Command.h"
+#include <iostream>
+using namespace std;
+
+enum eGameState {GSM_MENU, GSM_LEVEL, GSM_END};
+eGameState gameState;
 
 enum DecisionState {Selecting,Commanding};
 
@@ -87,7 +92,7 @@ bool mouseIsOnScreen(){
 	return false;
 }
 
-int _tmain(int argc, _TCHAR* argv[])
+void mainGame()
 {
 	//Cheat protection:
 	//Encrypt packets
@@ -186,6 +191,46 @@ int _tmain(int argc, _TCHAR* argv[])
 		drawUnitVector(&window,enemyUnits);
         window.display();
     }
+}
+
+void menu()
+{
+	cout << "This will be the menu" << endl;
+	int response=0;
+	cout << "Press 1 to start game." << endl;
+	cin >> response;
+	if(response==1)
+	{
+		gameState = GSM_LEVEL;
+	}
+	
+}
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	gameState = GSM_MENU;
+
+	switch (gameState)
+{
+  case GSM_MENU :
+  {
+    // Menu state
+	menu();
+  }
+  break;
+  case GSM_LEVEL :
+  {
+    // Level state
+	  mainGame();
+  }
+  break;
+  case GSM_END :
+  {
+    // End state
+  }
+  break;
+}
 
     return 0;
 }
