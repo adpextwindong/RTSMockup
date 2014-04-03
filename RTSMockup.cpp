@@ -195,15 +195,53 @@ void mainGame()
 
 void menu()
 {
-	cout << "This will be the menu" << endl;
-	int response=0;
-	cout << "Press 1 to start game." << endl;
-	cin >> response;
-	if(response==1)
+
+	sf::RectangleShape rectangle(sf::Vector2f(120, 50));
+	rectangle.setSize(sf::Vector2f(400, 100));
+	rectangle.setPosition(300,300);
+	rectangle.setFillColor(sf::Color::Magenta);
+
+	/*sf::Image image;
+
+	if(!image.loadFromFile("MainMenu.png"))
 	{
-		gameState = GSM_LEVEL;
+		cout << "error loading picture\n";
 	}
-	
+
+	sf::Texture texture;
+	texture.update(image);
+
+	sf::Sprite sprite;
+	sprite.setTexture(texture);*/
+
+	while (window.isOpen())
+    {
+        // check all the window's events that were triggered since the last iteration of the loop
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+			sf::Vector2i point = sf::Mouse::getPosition(window);
+
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+				cout<< "click\n";
+				if(point.x>=300&&point.x<=700)
+				{
+					if(point.y>=300&&point.y<=400)
+					{
+						gameState=GSM_LEVEL;
+						break;
+					}
+				}
+			}
+
+        window.clear(sf::Color::Black);
+		window.draw(rectangle);
+		//window.draw(sprite);
+        window.display();
+    }
 }
 
 
@@ -211,26 +249,31 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	gameState = GSM_MENU;
 
-	switch (gameState)
-{
-  case GSM_MENU :
-  {
-    // Menu state
-	menu();
-  }
-  break;
-  case GSM_LEVEL :
-  {
-    // Level state
-	  mainGame();
-  }
-  break;
-  case GSM_END :
-  {
-    // End state
-  }
-  break;
-}
-
+	for(;;){
+		switch (gameState)
+		{
+		  case GSM_MENU :
+		  {
+			// Menu state
+			  menu();
+			/*if(menu()==1)
+			{
+				gameState = GSM_LEVEL;
+			}*/
+		  }
+		  break;
+		  case GSM_LEVEL :
+		  {
+			// Level state
+			  mainGame();
+		  }
+		  break;
+		  case GSM_END :
+		  {
+			// End state
+		  }
+		  break;
+		}
+	}
     return 0;
 }
