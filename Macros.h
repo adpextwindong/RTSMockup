@@ -1,5 +1,5 @@
 //TODO, MAKE CONFIG SYSTEM. FOR NOW THESE COMPILE TIME MACROS ARE FINE ENOUGH
-
+#pragma once
 #define PLAYER_COLOR sf::Color::Green
 #define ENEMY_COLOR sf::Color::Red
 #define SELECTION_STROKE_COLOR sf::Color::Blue

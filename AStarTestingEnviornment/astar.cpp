@@ -1,5 +1,5 @@
 #include "stdafx.h"//VS2010 Requirement
-#include "Macros.h"
+//#include "Macros.h"
 
 
 enum Directions {Up,Down,Left,DLeft,DULeft,Right,DRight,DURight};
