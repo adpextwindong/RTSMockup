@@ -9,8 +9,8 @@
 void printError(char * errorStr){
 	printf("\n**ERROR**\n%s",errorStr);
 }
-void networkCleanCString(char * str){
-	for(unsigned int i=strlen(str);i>0;i--){
+void networkCleanCString(char * str,unsigned int strlength){
+	for(unsigned int i=strlength-1;i>0;i--){
 		if(str[i]==-52){
 			str[i]='\0';
 		}else{
@@ -35,10 +35,11 @@ void clientMain(void){
 		printError("Recieving Error");
 	}
 	//fix network cleaning shit
-	networkCleanCString(databuff);
+	networkCleanCString(databuff,128);
+	
 	//std::cout <<databuff << std::endl;
 	printf("%s",databuff);
-	serverSocket.disconnect();
+	//serverSocket.disconnect();
 }
 void serverMain(void){
 	sf::TcpListener listener;
