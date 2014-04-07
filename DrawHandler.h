@@ -5,5 +5,7 @@ class DrawHandler // client draw call item container
 public:
 	DrawHandler(void);
 	~DrawHandler(void);
+
+	
 };
 
