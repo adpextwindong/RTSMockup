@@ -2,7 +2,10 @@
 class HealthBar
 {
 public:
-	HealthBar(void);
+	HealthBar(int *, int *);
 	~HealthBar(void);
-};
 
+	int *HPmax;
+	int *HPcurrent;
+
+};

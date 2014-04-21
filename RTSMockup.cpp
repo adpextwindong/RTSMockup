@@ -269,6 +269,17 @@ void mouseLogic(){
 				updateSelection();
 		}
 }
+
+void gameLogic() {
+	for (int i=0; i<5; i++) {
+		for (int j=0; j<5; j++) {
+			if (std::sqrt(std::pow(s_enemyUnits[j].UnitShape.getPosition().x - s_playerUnits[j].UnitShape.getPosition().x, 2) +  std::pow(s_enemyUnits[j].UnitShape.getPosition().y - s_playerUnits[j].UnitShape.getPosition().y, 2)) > s_playerUnits[i].UnitShape.getRadius()) {
+				s_enemyUnits[j].HPcurrent = s_enemyUnits[j].HPcurrent - 5;
+			}
+		}
+	}
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//Cheat protection:

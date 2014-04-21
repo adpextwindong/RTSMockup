@@ -4,7 +4,7 @@
 
 Unit::Unit(Point2D _Posistion,sf::Color _color,double _size){
 	position=Point2D(_Posistion.x+_size,_Posistion.y+_size);
-		//Makes circle center the Posistion
+	//Makes circle center the Posistion
 	Color=_color;
 	size=_size;
 	selected = false;
@@ -12,7 +12,8 @@ Unit::Unit(Point2D _Posistion,sf::Color _color,double _size){
 	UnitShape.setPosition(position.x,position.y);
 	UnitShape.setFillColor(Color);
 	speed = 0.f;
-	HP =0.f;
+	HPmax = 1000;
+	HPcurrent = HPmax;
 }
 
 void Unit::Move(Point2D move2DVector){

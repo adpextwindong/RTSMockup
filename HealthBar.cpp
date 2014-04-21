@@ -2,8 +2,12 @@
 #include "HealthBar.h"
 
 
-HealthBar::HealthBar(void)
+HealthBar::HealthBar(int *pointer1, int *pointer2)
 {
+	HPmax = pointer1;
+	HPcurrent = pointer2;
+
+
 }
 
 

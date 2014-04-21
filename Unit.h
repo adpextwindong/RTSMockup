@@ -10,6 +10,8 @@ class Unit
 		double size;
 		bool selected;
 		Point2D position;
+		int HPmax;
+		int HPcurrent;
 		sf::Color Color;
 		sf::CircleShape UnitShape;
 		std::vector<Command> unitCommands;//queue for Players Commands
