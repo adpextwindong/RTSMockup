@@ -7,6 +7,7 @@
 #include "Tile.h"//Game Array Tile Class
 #include "Macros.h"//Macros TODO Make config system
 #include "fpsCounter.h"//FPS Counter
+#include "iostream"
 
 //#define PLAYER_COLOR Color::Green
 //#define SELECTION_STROKE_COLOR sf::Color::Blue
@@ -30,6 +31,7 @@ std::vector<Unit *> c_playerSelection;
 CommandEnum currentCommand;
 //Mouse Logic Variables
 bool leftMouseClickedLastCycle;
+bool rightMouseClickedLastCycle;
 DecisionState mouseCommandState;
 bool selectionDrawState;
 
@@ -161,13 +163,21 @@ Unit * unitAtMousePos(){//TODO: FINISH THIS FUNCTION
 	return NULL;
 }
 void CommandSelectionUnits(CommandEnum theCommand, std::vector<Unit *> * c_playerSelection){
-	for(unsigned int i=0;i<(*c_playerSelection).size();i++){
-		if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)&&!sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
-			printf("UnShifted %S Command",commandString(theCommand));
-			(*(*c_playerSelection)[i]).unitCommands.empty();
+	if(theCommand==Move){
+		for(unsigned int i=0;i<c_playerSelection->size();i++){
+			if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)&&!sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
+				printf("UnShifted %S Command",commandString(theCommand));
+				(*c_playerSelection)[i]->unitCommands.empty();
+			}
+			printf("Shifted %S Command",commandString(theCommand));
+			Command tempComand(Command(Move,sf::Mouse::getPosition(window),unitAtMousePos()));
+			if(tempComand.theCommand == Move){
+				printf("its equal to move");
+			}
+			(*(*c_playerSelection)[i]).unitCommands.push_back(tempComand);
 		}
-		printf("Shifted %S Command",commandString(theCommand));
-		(*(*c_playerSelection)[i]).unitCommands.push_back(Command(theCommand,Point2D(sf::Mouse::getPosition(window)),unitAtMousePos()));
+	}else{
+		printf("No...\n");
 	}
 }
 
@@ -231,8 +241,8 @@ void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j)
 //}
 void mouseLogic(){
 		//IF MOUSE IS ON THE WINDOW
-		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)^leftMouseClickedLastCycle){//if Left Mouse Button state has changed since last cycle
-			if(leftMouseClickedLastCycle==true){//if user has released left click button
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)^leftMouseClickedLastCycle) {//if Left Mouse Button state has changed since last cycle
+			if (leftMouseClickedLastCycle == true) {//if user has released left click button
 				switch(mouseCommandState){
 				case Selecting://Selection Change
 					//pushBackSelection(&c_playerSelection,&s_playerUnits);
@@ -261,8 +271,9 @@ void mouseLogic(){
 				}
 			}
 			leftMouseClickedLastCycle^=true;//Swaps leftMouseClickLastCycle state
-		}else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){//If Right mbutton clicked
+		}else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)^rightMouseClickedLastCycle){//If Right mbutton clicked
 			CommandSelectionUnits(Move,&c_playerSelection);
+			rightMouseClickedLastCycle^=true;
 		}
 		
 		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)==true &&leftMouseClickedLastCycle==true && mouseCommandState==Selecting){//If the player is still holding down the left click button while selecting
@@ -271,13 +282,42 @@ void mouseLogic(){
 }
 
 void gameLogic() {
-	for (int i=0; i<5; i++) {
+	for (unsigned int i=0; i<5; i++) {
+		if (s_playerUnits[i].unitCommands.size()!=0) {
+			if (s_playerUnits[i].unitCommands[0].theCommand == Move) {
+				//double angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) - (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
+				double angle = 0;
+					
+				if (sf::Mouse::getPosition(window).x - s_playerUnits[i].UnitShape.getPosition().x >= 0) {
+					angle = atan((sf::Mouse::getPosition(window).y - s_playerUnits[i].UnitShape.getPosition().y) / (sf::Mouse::getPosition(window).x - s_playerUnits[i].UnitShape.getPosition().x));
+					//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
+					s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
+				} else {
+					angle = atan((sf::Mouse::getPosition(window).y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].UnitShape.getPosition().x - sf::Mouse::getPosition(window).x));
+					//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
+					s_playerUnits[i].UnitShape.move(-1 * cos(angle), sin(angle));
+					//s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
+				}
+					
+					
+				//s_playerUnits[i].UnitShape.move(sf::Mouse::getPosition(window).x - s_playerUnits[i].UnitShape.getPosition().x, sf::Mouse::getPosition(window).y - s_playerUnits[i].UnitShape.getPosition().y);
+				//std::cout << angle << std::endl;
+
+
+				//tan^-1((y_mouse - y_unit) / (x_mouse - x_unit))
+				//x_unit = x_unit + 10cos(angle)
+				//y_unit = y_unit + 10cos(angle)
+			}
+		}
+	}
+
+	/*for (int i=0; i<5; i++) {
 		for (int j=0; j<5; j++) {
 			if (std::sqrt(std::pow(s_enemyUnits[j].UnitShape.getPosition().x - s_playerUnits[j].UnitShape.getPosition().x, 2) +  std::pow(s_enemyUnits[j].UnitShape.getPosition().y - s_playerUnits[j].UnitShape.getPosition().y, 2)) > s_playerUnits[i].UnitShape.getRadius()) {
 				s_enemyUnits[j].HPcurrent = s_enemyUnits[j].HPcurrent - 5;
 			}
 		}
-	}
+	}*/
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -326,8 +366,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Non Shifted Commands empty the list.
 	//Same with Unit Selection
 
-	mouseCommandState = Selecting;//True if valid command key is pressed.
-	leftMouseClickedLastCycle = false;//For box selection
+	mouseCommandState = Selecting; //True if valid command key is pressed.
+	leftMouseClickedLastCycle = false; //For box selection
+	rightMouseClickedLastCycle = true;
 
 	c_clientSelectionShape.setFillColor(sf::Color::Transparent);
 	c_clientSelectionShape.setOutlineThickness(3.0f);
@@ -384,6 +425,7 @@ int _tmain(int argc, _TCHAR* argv[])
                 window.close();
         }
 		mouseLogic();
+		gameLogic();
         window.clear();
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
