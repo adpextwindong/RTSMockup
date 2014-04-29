@@ -287,27 +287,33 @@ void gameLogic() {
 			if (s_playerUnits[i].unitCommands[0].theCommand == Move) {
 				//double angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) - (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
 				double angle = 0;
-					
-				if (sf::Mouse::getPosition(window).x - s_playerUnits[i].UnitShape.getPosition().x >= 0) {
-					angle = atan((sf::Mouse::getPosition(window).y - s_playerUnits[i].UnitShape.getPosition().y) / (sf::Mouse::getPosition(window).x - s_playerUnits[i].UnitShape.getPosition().x));
+				sf::Vector2i currentPos = s_playerUnits[i].unitCommands[0].mousePosition;
+				////sf::Vector2f destinationPos =  s_playerUnits[0].UnitShape.getPosition();
+				sf::Vector2i castedPos(s_playerUnits[0].UnitShape.getPosition().x,s_playerUnits[0].UnitShape.getPosition().y);
+				/*if( (currentPos.x > (castedPos.x - 1) || currentPos.x < (castedPos.x + 1)) && (currentPos.y > (castedPos.y - 1) || currentPos.y < (castedPos.y + 1)))
+				{
+					s_playerUnits[i].unitCommands.erase(s_playerUnits[i].unitCommands.begin());
+				}else{*/
+				//s_playerUnits[i].unitCommands.erase(s_playerUnits[i].unitCommands.begin());
+				if (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x >= 0) {
+					angle = atan(((float) currentPos.y - castedPos.y) / (currentPos.x - castedPos.x));
 					//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
 					s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
 				} else {
-					angle = atan((sf::Mouse::getPosition(window).y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].UnitShape.getPosition().x - sf::Mouse::getPosition(window).x));
+					angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].UnitShape.getPosition().x - s_playerUnits[i].unitCommands[0].mousePosition.x));
 					//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
 					s_playerUnits[i].UnitShape.move(-1 * cos(angle), sin(angle));
 					//s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
 				}
-					
-					
 				//s_playerUnits[i].UnitShape.move(sf::Mouse::getPosition(window).x - s_playerUnits[i].UnitShape.getPosition().x, sf::Mouse::getPosition(window).y - s_playerUnits[i].UnitShape.getPosition().y);
 				//std::cout << angle << std::endl;
 
-
+				//}
 				//tan^-1((y_mouse - y_unit) / (x_mouse - x_unit))
 				//x_unit = x_unit + 10cos(angle)
 				//y_unit = y_unit + 10cos(angle)
 			}
+
 		}
 	}
 
@@ -368,7 +374,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	mouseCommandState = Selecting; //True if valid command key is pressed.
 	leftMouseClickedLastCycle = false; //For box selection
-	rightMouseClickedLastCycle = true;
+	rightMouseClickedLastCycle = false;
 
 	c_clientSelectionShape.setFillColor(sf::Color::Transparent);
 	c_clientSelectionShape.setOutlineThickness(3.0f);
