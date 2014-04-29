@@ -167,13 +167,12 @@ void CommandSelectionUnits(CommandEnum theCommand, std::vector<Unit *> * c_playe
 		for(unsigned int i=0;i<c_playerSelection->size();i++){
 			if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)&&!sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
 				printf("UnShifted %S Command",commandString(theCommand));
-				(*c_playerSelection)[i]->unitCommands.empty();
+				(*c_playerSelection)[i]->unitCommands.clear();
+				//(*c_playerSelection)[i]->unitCommands.empty();
+			}else{
+				printf("Shifted %S Command",commandString(theCommand));
 			}
-			printf("Shifted %S Command",commandString(theCommand));
 			Command tempComand(Command(Move,sf::Mouse::getPosition(window),unitAtMousePos()));
-			if(tempComand.theCommand == Move){
-				printf("its equal to move");
-			}
 			(*(*c_playerSelection)[i]).unitCommands.push_back(tempComand);
 		}
 	}else{
@@ -210,7 +209,7 @@ void setQuadPos(sf::Vertex * quad,const unsigned int i,const unsigned int j){
 }
 
 void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j){//TODO FIX THIS
-	printf("\n\n");
+	//printf("\n\n");
 	//	FALSE		TRUE
 	//0,0  32,0		32,0  64,0
 	//0,32 32,32	32,32 64,32
@@ -248,7 +247,7 @@ void mouseLogic(){
 					//pushBackSelection(&c_playerSelection,&s_playerUnits);
 					
 					grabOnScreenSelectedUnits(&s_playerUnits,&c_playerSelection);
-					printf("%d\n",c_playerSelection.size());
+					//printf("%d\n",c_playerSelection.size());
 					selectionDrawState=false;
 					break;
 				case Commanding:
