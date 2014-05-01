@@ -38,7 +38,11 @@ bool selectionDrawState;
 void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//draws all the units in a unit list
 	for(unsigned int i=0;i<list.size();i++){
 		(*window).draw(list[i].UnitShape);
+		(*window).draw(list[i].unitHealthBar.HPgreen);
+		(*window).draw(list[i].unitHealthBar.HPred);
+
 	}
+	
 	
 }
 
@@ -122,7 +126,7 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* s_playerUnits,std::vector<Unit
 					if(c_clientSelectionShape.getSize().x ==0 && c_clientSelectionShape.getSize().y ==0){
 						if(sqrt(std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().x-c_clientSelectionShape.getPosition().x,2.0f)+std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().y-c_clientSelectionShape.getPosition().y,2.0f))<=(*s_playerUnits)[unitIterator].UnitShape.getRadius()){
 							(*c_playerSelection).erase((*c_playerSelection).begin()+j);
-							unitIterator=(*s_playerUnits).size()+1;
+							unitIterator=(*s_playerUnits).size()+1;//fix the reselection
 						}
 					}
 					break;
@@ -282,6 +286,8 @@ void mouseLogic(){
 
 void gameLogic() {
 	for (unsigned int i=0; i<5; i++) {
+		//std::cout << s_playerUnits[i].UnitShape.getPosition().x << "," << s_playerUnits[i].UnitShape.getPosition().y << std::endl;
+		s_playerUnits[i].unitHealthBar.HPupdate(s_playerUnits[i].UnitShape.getPosition());
 		if (s_playerUnits[i].unitCommands.size()!=0) {
 			if (s_playerUnits[i].unitCommands[0].theCommand == Move) {
 				//double angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) - (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));

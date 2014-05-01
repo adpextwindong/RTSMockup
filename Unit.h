@@ -2,6 +2,8 @@
 #include "Point2D.h"
 #include <SFML/Graphics.hpp>
 #include "Command.h"
+#include "HealthBar.h"
+
 class Unit
 {
 	public:
@@ -12,6 +14,7 @@ class Unit
 		Point2D position;
 		int HPmax;
 		int HPcurrent;
+		HealthBar unitHealthBar;
 		sf::Color Color;
 		sf::CircleShape UnitShape;// unit sprite
 		std::vector<Command> unitCommands;//queue for Players Commands
