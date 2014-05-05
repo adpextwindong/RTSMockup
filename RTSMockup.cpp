@@ -38,8 +38,8 @@ bool selectionDrawState;
 void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//draws all the units in a unit list
 	for(unsigned int i=0;i<list.size();i++){
 		(*window).draw(list[i].UnitShape);
-		(*window).draw(list[i].unitHealthBar.HPgreen);
 		(*window).draw(list[i].unitHealthBar.HPred);
+		(*window).draw(list[i].unitHealthBar.HPgreen);
 
 	}
 	
@@ -92,63 +92,100 @@ void updateSelection(){
 	printf("Selection Cords %f.0 %f.0\n\n",c_clientSelectionShape.getPosition().x,c_clientSelectionShape.getPosition().y);*/
 }
 unsigned int counter=0;
-void grabOnScreenSelectedUnits(std::vector<Unit>* s_playerUnits,std::vector<Unit *>* c_playerSelection){
+bool listContainsThisPointer(std::vector<Unit *> * list,Unit * pUnit){//TODO make function compliant with remove_if to clean up selection code
+	bool returnVal = false;
+	if(pUnit!=nullptr && list!=nullptr){
+		for(unsigned int i = 0; i < list->size();i++){
+			if((*list)[i] == pUnit){
+				returnVal = true;
+				break;
+			}
+		}
+	}else{
+		returnVal;
+	}
+	return returnVal;
+}
+void grabOnScreenSelectedUnits(std::vector<Unit>* s_playerUnits,std::vector<Unit *>* c_playerSelection){//TODO reimplement the extra special functionality. Click on units. Select if box within radius of unit
 	bool shifted = false;
 	unsigned int preExistingElemCount=0;
 	if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)&&!sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
-		printf("UnShifted %S Command \n","Selection");
+		printf("\nUnShifted %S Command\n","Selection");
 		(*c_playerSelection).clear();
 		//printf("\nList cleared\n");
 	}else{
-		printf("Shifted %S Command \n","Selection");
+		printf("\nShifted %S Command\n","Selection");
 		shifted=true;
 		preExistingElemCount=(*c_playerSelection).size();
 	}
-	float minX=c_clientSelectionShape.getPoint(0).x+c_clientSelectionShape.getPosition().x;
+	float minX=window.getSize().x;
 	float maxX=0.f;
-	float minY=c_clientSelectionShape.getPoint(0).y+c_clientSelectionShape.getPosition().y;
+	float minY=window.getSize().y;
 	float maxY=0.f;
-	for(int i=0;i<4;i++){
+	for(int i=0;i<4;i++){//Iterate through selection points and get the bounds of the box.
 		minX = minX > c_clientSelectionShape.getPoint(i).x+c_clientSelectionShape.getPosition().x ? c_clientSelectionShape.getPoint(i).x+c_clientSelectionShape.getPosition().x : minX;
 		maxX = maxX < c_clientSelectionShape.getPoint(i).x+c_clientSelectionShape.getPosition().x ? c_clientSelectionShape.getPoint(i).x+c_clientSelectionShape.getPosition().x : maxX;
 		minY = minY > c_clientSelectionShape.getPoint(i).y+c_clientSelectionShape.getPosition().y ? c_clientSelectionShape.getPoint(i).y+c_clientSelectionShape.getPosition().y : minY;
 		maxY = maxY < c_clientSelectionShape.getPoint(i).y+c_clientSelectionShape.getPosition().y ? c_clientSelectionShape.getPoint(i).y+c_clientSelectionShape.getPosition().y : maxY;
 	}
+
+	
 	float radius=0.f;
-	for(unsigned int unitIterator=0;unitIterator<(*s_playerUnits).size();unitIterator++){//Iterate through all units
-		Unit * currentPointer=NULL;
-		bool containsThePointer = false;
-		if(shifted==true){//If user is adding, check if current unit is on the list already
-			currentPointer =&(*s_playerUnits)[unitIterator];
-			for(unsigned int j=0;j<(*c_playerSelection).size();j++){//iterate through unit selection vector
-				if(currentPointer==(*c_playerSelection)[j]){
-					containsThePointer=true;
-					if(c_clientSelectionShape.getSize().x ==0 && c_clientSelectionShape.getSize().y ==0){
-						if(sqrt(std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().x-c_clientSelectionShape.getPosition().x,2.0f)+std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().y-c_clientSelectionShape.getPosition().y,2.0f))<=(*s_playerUnits)[unitIterator].UnitShape.getRadius()){
-							(*c_playerSelection).erase((*c_playerSelection).begin()+j);
-							unitIterator=(*s_playerUnits).size()+1;//fix the reselection
-						}
-					}
-					break;
-				}
-			}
-		}
-		if(containsThePointer==false){//if this element isn't in the list
-			if(c_clientSelectionShape.getSize().x ==0 && c_clientSelectionShape.getSize().y ==0){
-				if(sqrt(std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().x-c_clientSelectionShape.getPosition().x,2.0f)+std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().y-c_clientSelectionShape.getPosition().y,2.0f))<=(*s_playerUnits)[unitIterator].UnitShape.getRadius()){
-					(*c_playerSelection).push_back(&(*s_playerUnits)[unitIterator]);
+	for(unsigned int i = 0; i < s_playerUnits->size(); i++){
+		Unit * pUnit = &(*s_playerUnits)[i];
+		radius = (*s_playerUnits)[i].UnitShape.getRadius();
+		if(pUnit->UnitShape.getPosition().x <= (maxX + radius) && pUnit->UnitShape.getPosition().x >= (minX - radius)){
+			if(pUnit->UnitShape.getPosition().y <= (maxY + radius) && pUnit->UnitShape.getPosition().y >= (minY - radius)){
+				if(listContainsThisPointer(c_playerSelection,pUnit) == false){
+					c_playerSelection->push_back(pUnit);
 				}
 			}else{
-				radius=(*s_playerUnits)[unitIterator].UnitShape.getRadius()/2;
-				sf::Vector2f position((*s_playerUnits)[unitIterator].position.x,(*s_playerUnits)[unitIterator].position.y);
-				if(position.x >= minX && position.x <= maxX){
-					if(position.y >= minY && position.y <= maxY){
-						(*c_playerSelection).push_back(&(*s_playerUnits)[unitIterator]);
-					}
+				if(!shifted && listContainsThisPointer(c_playerSelection,pUnit) == true){
+					c_playerSelection->erase( std::remove(std::begin(*c_playerSelection), std::end(*c_playerSelection), pUnit), std::end(*c_playerSelection));
 				}
+			}
+		}else{
+			if(!shifted && listContainsThisPointer(c_playerSelection,pUnit) == true){
+				c_playerSelection->erase( std::remove(std::begin(*c_playerSelection), std::end(*c_playerSelection), pUnit), std::end(*c_playerSelection));
 			}
 		}
 	}
+	printf("\nUnit Count: %d\n",c_playerSelection->size());
+	//TODO redo this shit right here to fix functionality. Optimizations can be done later.
+	//for(unsigned int unitIterator=0;unitIterator<(*s_playerUnits).size();unitIterator++){//Iterate through all units
+	//	Unit * currentPointer=NULL;
+	//	bool containsThePointer = false;
+	//	if(shifted==true){//If user is adding, check if current unit is on the list already
+	//		currentPointer =&(*s_playerUnits)[unitIterator];
+	//		for(unsigned int j=0;j<(*c_playerSelection).size();j++){//iterate through unit selection vector
+	//			if(currentPointer==(*c_playerSelection)[j]){
+	//				containsThePointer=true;
+	//				if(c_clientSelectionShape.getSize().x ==0 && c_clientSelectionShape.getSize().y ==0){
+	//					if(sqrt(std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().x-c_clientSelectionShape.getPosition().x,2.0f)+std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().y-c_clientSelectionShape.getPosition().y,2.0f))<=(*s_playerUnits)[unitIterator].UnitShape.getRadius()){
+	//						(*c_playerSelection).erase((*c_playerSelection).begin()+j);
+	//						unitIterator=(*s_playerUnits).size()+1;//fix the reselection
+	//					}
+	//				}
+	//				break;
+	//			}
+	//		}
+	//	}
+	//	if(containsThePointer==false){//if this element isn't in the list
+	//		if(c_clientSelectionShape.getSize().x ==0 && c_clientSelectionShape.getSize().y ==0){
+	//			if(sqrt(std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().x-c_clientSelectionShape.getPosition().x,2.0f)+std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().y-c_clientSelectionShape.getPosition().y,2.0f))<=(*s_playerUnits)[unitIterator].UnitShape.getRadius()){
+	//				(*c_playerSelection).push_back(&(*s_playerUnits)[unitIterator]);
+	//			}
+	//		}else{
+	//			radius=(*s_playerUnits)[unitIterator].UnitShape.getRadius()/2;
+	//			sf::Vector2f position((*s_playerUnits)[unitIterator].position.x,(*s_playerUnits)[unitIterator].position.y);
+	//			if(position.x >= minX && position.x <= maxX){
+	//				if(position.y >= minY && position.y <= maxY){
+	//					(*c_playerSelection).push_back(&(*s_playerUnits)[unitIterator]);
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 }
 char * commandString(CommandEnum theCommand){
 	switch(theCommand){

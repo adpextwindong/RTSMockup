@@ -17,7 +17,7 @@ HealthBar::HealthBar(void){
 
 }
 void HealthBar::HPupdate(sf::Vector2f position) {
-	std::cout << position.x << "," << position.y << std::endl;
+	//std::cout << position.x << "," << position.y << std::endl;
 	HPgreen.setPosition(position.x - 15, position.y - 30);
 	HPred.setPosition(position.x - 15, position.y - 30);
 	//std::cout << HPgreen.getPosition().x << "," << HPgreen.getPosition().y << std::endl;
