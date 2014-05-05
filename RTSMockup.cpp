@@ -13,9 +13,13 @@
 //#define SELECTION_STROKE_COLOR sf::Color::Blue
 //#define STROKE_SIZE 4
 //#define GAMEARRAYSIZE_MOCKUP 128
-//#define TILE_SIZE 32
+//#define TILE_SIZE 
+enum eGameState {GSM_MENU, GSM_LEVEL, GSM_END};
+eGameState gameState;
 
-sf::Vector2i screenSize (800,600);
+
+
+sf::Vector2i screenSize (1024,700);
 
 sf::Vector2i screenPos (0,0);
 
@@ -375,9 +379,53 @@ void gameLogic() {
 		}
 	}*/
 }
-
-int _tmain(int argc, _TCHAR* argv[])
+void menu()
 {
+
+	sf::RectangleShape rectangle(sf::Vector2f(120, 50));
+	rectangle.setSize(sf::Vector2f(400, 100));
+	rectangle.setPosition(300,300);
+	rectangle.setFillColor(sf::Color::Magenta);
+
+	sf::Texture texture;
+
+	if(!texture.loadFromFile("MainMenu.png"))
+	{
+		printf("error loading picture\n");
+	}
+
+	sf::Sprite sprite;
+	sprite.setTexture(texture);
+
+	while (window.isOpen())
+    {
+        // check all the window's events that were triggered since the last iteration of the loop
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+			sf::Vector2i point = sf::Mouse::getPosition(window);
+
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+				if(point.x>=380&&point.x<=633)
+				{
+					if(point.y>=325&&point.y<=415)
+					{
+						gameState=GSM_LEVEL;
+						break;
+					}
+				}
+			}
+
+        window.clear(sf::Color::Black);
+		window.draw(rectangle);
+		window.draw(sprite);
+        window.display();
+    }
+}
+int mainGame(){
 	//Cheat protection:
 	//Encrypt packets
 	//or use Base64 and obsfuscate
@@ -530,5 +578,39 @@ int _tmain(int argc, _TCHAR* argv[])
 		
     }
 
+    return 0;
+
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	gameState = GSM_MENU;
+
+	for(;;){
+		switch (gameState)
+		{
+		  case GSM_MENU :
+		  {
+			// Menu state
+			  menu();
+			/*if(menu()==1)
+			{
+				gameState = GSM_LEVEL;
+			}*/
+		  }
+		  break;
+		  case GSM_LEVEL :
+		  {
+			// Level state
+			  mainGame();
+		  }
+		  break;
+		  case GSM_END :
+		  {
+			// End state
+		  }
+		  break;
+		}
+	}
     return 0;
 }
