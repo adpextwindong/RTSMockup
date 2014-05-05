@@ -15,11 +15,15 @@
 //#define GAMEARRAYSIZE_MOCKUP 128
 //#define TILE_SIZE 32
 
+sf::Vector2i screenSize (800,600);
+
+sf::Vector2i screenPos (0,0);
+
 enum DecisionState {Selecting,Commanding};
  
 sf::RectangleShape c_clientSelectionShape;
 sf::Vector2i c_originalSelectPoint;//SELECT LEFT CLICK POINT
-sf::RenderWindow window(sf::VideoMode(1024, 768), "RTS Mockup");
+sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "RTS Mockup");
 std::vector<Unit> s_playerUnits;
 std::vector<Unit> s_enemyUnits;
 Tile gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];//game level
@@ -451,6 +455,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//printf("\nGame Tile Count: X: %d Y: %d\n",tileViewSizeX,tileViewSizeY);
 	sf::VertexArray tileSet(sf::Quads,4*tileViewSizeX*tileViewSizeY);//http://www.sfml-dev.org/tutorials/2.1/graphics-vertex-array.php
 	sf::RenderStates tileSetStates;
+	sf::View view;
+	fpsCounter myFps;
 	tileSetStates.blendMode=sf::BlendNone;
 	tileSetStates.texture = &tileSetTexture;
 
@@ -479,6 +485,30 @@ int _tmain(int argc, _TCHAR* argv[])
 		mouseLogic();
 		gameLogic();
         window.clear();
+		float delta = myFps.getDelta();
+		
+		if(sf::Mouse::getPosition(window).x > screenSize.x)
+		{
+			screenPos.x += 10*delta;
+		}
+		else if(sf::Mouse::getPosition(window).x < 0)
+		{
+			screenPos.x -=10*delta;
+		}
+		if(sf::Mouse::getPosition(window).y > screenSize.y)
+		{
+			screenPos.y +=10*delta;
+		}
+		else if(sf::Mouse::getPosition(window).y < 0)
+		{
+			screenPos.y -=10*delta;
+		}
+		
+
+		view.reset(sf::FloatRect(screenPos.x,screenPos.y,screenSize.x,screenSize.y));
+
+		window.setView(view);
+		std::cout << screenPos.x << " " << screenPos.y << std::endl;
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
 		window.draw(background);

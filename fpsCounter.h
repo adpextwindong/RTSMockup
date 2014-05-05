@@ -9,6 +9,7 @@ public:
 	fpsCounter(const sf::Font& font);
 	~fpsCounter(void);
 	void fpsCounter::draw(sf::RenderWindow* window);
+	float getDelta(void);
 	void updateFPSCounter(void);
 	void getFPSText(void);
 private:
