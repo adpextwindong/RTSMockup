@@ -13,3 +13,4 @@
 *.ipch
 *.opensdf
 *.log
+*.cache
