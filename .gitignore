@@ -9,3 +9,7 @@
 *.ipch
 *.tlog
 *.exe
+*.log
+*.ipch
+*.opensdf
+*.log
