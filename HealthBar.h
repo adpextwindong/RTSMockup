@@ -15,6 +15,6 @@ public:
 
 	sf::RectangleShape HPgreen;
 	sf::RectangleShape HPred;
-	void HealthBar::HPupdate(sf::Vector2f position);
+	void HealthBar::HPupdate(sf::Vector2f position,int *);
 
 };

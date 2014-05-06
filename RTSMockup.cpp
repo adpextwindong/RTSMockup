@@ -36,14 +36,16 @@ DecisionState mouseCommandState;
 bool selectionDrawState;
 
 void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//draws all the units in a unit list
-	for(unsigned int i=0;i<list.size();i++){
-		(*window).draw(list[i].UnitShape);
-		(*window).draw(list[i].unitHealthBar.HPred);
-		(*window).draw(list[i].unitHealthBar.HPgreen);
+	for(unsigned int i=0;i<list.size();i++) {
+		if (list[i].HPcurrent >= 0) {
+			(*window).draw(list[i].UnitShape);
+			(*window).draw(list[i].unitHealthBar.HPgreen);
+			(*window).draw(list[i].unitHealthBar.HPred);
+		}
 
 	}
 	
-	
+
 }
 
 void updateSelection(){
@@ -322,9 +324,15 @@ void mouseLogic(){
 }
 
 void gameLogic() {
+	
+	for (unsigned int i=0; i<3; i++) {
+		s_enemyUnits[i].unitHealthBar.HPupdate(s_enemyUnits[i].UnitShape.getPosition(),&s_enemyUnits[i].HPcurrent);
+	}
 	for (unsigned int i=0; i<5; i++) {
 		//std::cout << s_playerUnits[i].UnitShape.getPosition().x << "," << s_playerUnits[i].UnitShape.getPosition().y << std::endl;
-		s_playerUnits[i].unitHealthBar.HPupdate(s_playerUnits[i].UnitShape.getPosition());
+		s_playerUnits[i].unitHealthBar.HPupdate(s_playerUnits[i].UnitShape.getPosition(),&s_playerUnits[i].HPcurrent);
+
+
 		if (s_playerUnits[i].unitCommands.size()!=0) {
 			if (s_playerUnits[i].unitCommands[0].theCommand == Move) {
 				//double angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) - (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
@@ -363,13 +371,15 @@ void gameLogic() {
 		}
 	}
 
-	/*for (int i=0; i<5; i++) {
-		for (int j=0; j<5; j++) {
-			if (std::sqrt(std::pow(s_enemyUnits[j].UnitShape.getPosition().x - s_playerUnits[j].UnitShape.getPosition().x, 2) +  std::pow(s_enemyUnits[j].UnitShape.getPosition().y - s_playerUnits[j].UnitShape.getPosition().y, 2)) > s_playerUnits[i].UnitShape.getRadius()) {
-				s_enemyUnits[j].HPcurrent = s_enemyUnits[j].HPcurrent - 5;
+	for (int i=0; i<5; i++) {
+		for (int j=0; j<3; j++) {
+			float dist = std::sqrt(std::pow((s_enemyUnits[j].UnitShape.getPosition().x + s_enemyUnits[j].UnitShape.getRadius()) - (s_playerUnits[i].UnitShape.getPosition().x + s_playerUnits[i].UnitShape.getRadius()), 2) + std::pow((s_enemyUnits[j].UnitShape.getPosition().y + s_enemyUnits[j].UnitShape.getRadius()) - (s_playerUnits[i].UnitShape.getPosition().y + s_playerUnits[i].UnitShape.getRadius()), 2));
+			if (dist < 2 * s_playerUnits[i].UnitShape.getRadius()) {
+				s_enemyUnits[j].HPcurrent = s_enemyUnits[j].HPcurrent - 1;
+				std::cout << (&s_enemyUnits[j].HPcurrent == s_enemyUnits[j].unitHealthBar.HPcurrent) << std::endl;
 			}
 		}
-	}*/
+	}
 }
 
 int _tmain(int argc, _TCHAR* argv[])
