@@ -83,9 +83,9 @@ void updateSelection(){
 	}
 
 	//printf("Shape Pos:%f %f\n",c_clientSelectionShape.getPosition().x,c_clientSelectionShape.getPosition().y);
-	for(int i=0;i<4;i++){
+	//for(int i=0;i<4;i++){
 		//printf("P(%d): %.0f,%.0f ",i,c_clientSelectionShape.getPoint(i).x+c_clientSelectionShape.getPosition().x,c_clientSelectionShape.getPoint(i).y+c_clientSelectionShape.getPosition().y);
-	}
+	//}
 	//printf("\n\n");
 
 	//printf("Limited MosPos %d %d ",LimitedMousePos.x,LimitedMousePos.y);
@@ -107,6 +107,9 @@ bool listContainsThisPointer(std::vector<Unit *> * list,Unit * pUnit){//TODO mak
 		returnVal;
 	}
 	return returnVal;
+}
+float getDist(sf::Vector2f pos1, sf::Vector2f pos2){
+	return std::sqrt( std::pow(pos1.x - pos2.x ,2) + std::pow( pos1.y - pos2.y,2));
 }
 void grabOnScreenSelectedUnits(std::vector<Unit>* s_playerUnits,std::vector<Unit *>* c_playerSelection){//TODO reimplement the extra special functionality. Click on units. Select if box within radius of unit
 	bool shifted = false;
@@ -130,16 +133,32 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* s_playerUnits,std::vector<Unit
 		minY = minY > c_clientSelectionShape.getPoint(i).y+c_clientSelectionShape.getPosition().y ? c_clientSelectionShape.getPoint(i).y+c_clientSelectionShape.getPosition().y : minY;
 		maxY = maxY < c_clientSelectionShape.getPoint(i).y+c_clientSelectionShape.getPosition().y ? c_clientSelectionShape.getPoint(i).y+c_clientSelectionShape.getPosition().y : maxY;
 	}
+	int diffX = maxX - minX;
+	int diffY = maxY - minY;
 
 	
 	float radius=0.f;
 	for(unsigned int i = 0; i < s_playerUnits->size(); i++){
 		Unit * pUnit = &(*s_playerUnits)[i];
-		radius = (*s_playerUnits)[i].UnitShape.getRadius();
-		if(pUnit->UnitShape.getPosition().x <= (maxX + radius) && pUnit->UnitShape.getPosition().x >= (minX - radius)){
+		radius = pUnit->UnitShape.getRadius();
+	
+		if(diffX <=1 && diffY <= 1){
+			sf::Vector2f unitPos = pUnit->UnitShape.getPosition();
+			unitPos.x+= radius;
+			unitPos.y+= radius;
+			float dist = getDist(unitPos, c_clientSelectionShape.getPosition());
+			printf("\n%f\n",dist);
+			if(dist <= pUnit->UnitShape.getRadius()){
+				if(listContainsThisPointer(c_playerSelection,pUnit) == false){
+					c_playerSelection->push_back(pUnit);
+					break;
+				}
+			}
+		}else if(pUnit->UnitShape.getPosition().x <= (maxX + radius) && pUnit->UnitShape.getPosition().x >= (minX - radius)){
 			if(pUnit->UnitShape.getPosition().y <= (maxY + radius) && pUnit->UnitShape.getPosition().y >= (minY - radius)){
 				if(listContainsThisPointer(c_playerSelection,pUnit) == false){
 					c_playerSelection->push_back(pUnit);
+					
 				}
 			}else{
 				if(!shifted && listContainsThisPointer(c_playerSelection,pUnit) == true){
