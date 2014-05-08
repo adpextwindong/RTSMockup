@@ -1,18 +1,32 @@
 #include "StdAfx.h"
+#include "HealthBar.h"
 #include "Unit.h"
 #include <SFML/Graphics.hpp>
 
-Unit::Unit(sf::Vector2i _posistion,Team teamParam,unsigned char _size){
-	posistion=_posistion;
-		//Makes circle center the Posistion
-	playerTeam = teamParam;
+
+Unit::Unit(Point2D _Posistion,sf::Color _color,double _size){
+	HPmax = 1000;
+	HPcurrent = 1000;
+	unitHealthBar = HealthBar(&HPmax, &HPcurrent, &UnitShape);
+	position=Point2D(_Posistion.x+_size,_Posistion.y+_size);
+	//Makes circle center the Posistion
+	Color=_color;
 	size=_size;
+	selected = false;
 	UnitShape= sf::CircleShape(size);
-	UnitShape.setPosition(posistion.x,posistion.y);
-	UnitShape.setFillColor(returnColor(playerTeam));
-	moveTickAmount = 0.f;
-	HPcurrent =0.f;
+	UnitShape.setPosition(position.x,position.y);
+	unitHealthBar.HPupdate(UnitShape.getPosition(),&HPcurrent);
+	UnitShape.setFillColor(Color);
+	
+	speed = 0.f;
+	
+	
 }
+
+void Unit::Move(Point2D move2DVector){
+	position.add(move2DVector.x,move2DVector.y);
+}
+
 Unit::~Unit(void)
 {
 }

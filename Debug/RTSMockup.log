@@ -1,5 +1,0 @@
-﻿fpsCounter.obj : error LNK2005: "class sf::Color __cdecl returnColor(enum Team)" (?returnColor@@YA?AVColor@sf@@W4Team@@@Z) already defined in Command.obj
-Tile.obj : error LNK2005: "class sf::Color __cdecl returnColor(enum Team)" (?returnColor@@YA?AVColor@sf@@W4Team@@@Z) already defined in Command.obj
-Unit.obj : error LNK2005: "class sf::Color __cdecl returnColor(enum Team)" (?returnColor@@YA?AVColor@sf@@W4Team@@@Z) already defined in Command.obj
-MSVCRTD.lib(crtexe.obj) : error LNK2019: unresolved external symbol _main referenced in function ___tmainCRTStartup
-C:\Documents and Settings\Takumi\My Documents\GitHub\RTSMockup\Debug\RTSMockup.exe : fatal error LNK1120: 1 unresolved externals

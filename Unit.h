@@ -2,23 +2,27 @@
 #include "Point2D.h"
 #include <SFML/Graphics.hpp>
 #include "Command.h"
-#include "Macros.h"
+#include "HealthBar.h"
+
 class Unit
 {
 	public:
-		unsigned char moveTickAmount;
-		unsigned short HPmax;
-		unsigned short HPcurrent;
-		unsigned char size;//Pixel Ammount
-		sf::Vector2i posistion;//Posistion within gameLevel
-		Team playerTeam;
-		sf::Color unitColor;
-		sf::CircleShape UnitShape;
-		
+		double speed;
+		double HP;
+		double size;
+		bool selected;
+		Point2D position;
+		int HPmax;
+		int HPcurrent;
+		HealthBar unitHealthBar;
+		sf::Color Color;
+		sf::CircleShape UnitShape;// unit sprite
 		std::vector<Command> unitCommands;//queue for Players Commands
-		
-		Unit::Unit(sf::Vector2i _posistion,Team teamParam,unsigned char _size);
+		std::vector<std::vector<Unit>*> listsThisUnitIsIn;//List of all the lists this unit is in
+			//Used pointers to this Unit on death are removed
+
+		Unit::Unit(Point2D _Posistion,sf::Color color,double size);
 		~Unit(void);
-		bool Unit::Move(enum adjacentDirection direction);//Moves Unit
+		void Move(Point2D move2DVector);//Moves Unit
 };
 
