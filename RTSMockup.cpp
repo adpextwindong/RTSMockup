@@ -586,13 +586,14 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	gameState = GSM_MENU;
 
-	for(;;){
+	while( gameState != GSM_END){
 		switch (gameState)
 		{
 		  case GSM_MENU :
 		  {
 			// Menu state
 			  menu();
+			 
 			/*if(menu()==1)
 			{
 				gameState = GSM_LEVEL;
@@ -603,13 +604,15 @@ int _tmain(int argc, _TCHAR* argv[])
 		  {
 			// Level state
 			  mainGame();
+			  gameState = GSM_END;
 		  }
 		  break;
 		  case GSM_END :
 		  {
 			// End state
+			   break;
 		  }
-		  break;
+		 
 		}
 	}
     return 0;
