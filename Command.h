@@ -1,6 +1,6 @@
 #pragma once
 #include "Point2D.h"
-
+#include "SFML\Graphics.hpp"
 enum CommandEnum {Attack, Move, Halt, Stop};
 
 class Command
@@ -8,9 +8,9 @@ class Command
 public:
 	class Unit* target;
 	CommandEnum theCommand;
-	Point2D mousePosistion;
+	sf::Vector2i mousePosition;
 	
-	Command(CommandEnum,Point2D,Unit *);
+	Command(CommandEnum,sf::Vector2i,Unit *);
 	~Command(void);
 };
 
