@@ -409,9 +409,22 @@ void gameLogic() {
 void menu()
 {
 	//TODO populate this
+	//TODO implement GUI classes
+		//Buttons
+		//Sliders
 }
 int mainGame()
 {
+	//TODO add save games
+		//I think boost serialization should let us do that or we're gonna have to roll our own
+			//Could just make a zip/tar of folders full of text files.
+	//TODO add Z indexing abstract class.
+	sf::Sprite testSprite;
+	//TODO make cell attack beam animations. Make them orion lazer esque
+	//TODO Make mouse logic diagram
+	//TODO detail std::vector usage in Unit.unitCommands as a stack turned into a queue.
+		//we "push" things onto it and then consume the first on element as if it were a stack
+
 	//Cheat protection:
 	//Encrypt packets
 	//or use Base64 and obsfuscate
