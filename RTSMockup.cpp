@@ -1,6 +1,6 @@
 // RTSMockup.cpp : Defines the entry point for the console application.
 // TODO comment the dependancies of these headers
-#include "stdafx.h"
+#include "stdafx.h"//VS2010 Requirement
 #include <string.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
