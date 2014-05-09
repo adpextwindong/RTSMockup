@@ -331,12 +331,34 @@ void mouseLogic(){
 					updateSelection();
 		}
 }
-
+void updateMoveLogic(std::vector<Unit> * list){
+	for(unsigned int i = 0; i < list->size(); i++){
+		if ((*list)[i].unitCommands.size()!=0) {//TODO make this a function 
+			if ((*list)[i].unitCommands[0].theCommand == Move) {
+				double angle = 0;
+				sf::Vector2i currentPos = (*list)[i].unitCommands[0].mousePosition;
+				sf::Vector2i castedPos((*list)[i].UnitShape.getPosition().x,(*list)[i].UnitShape.getPosition().y);
+				if ((*list)[i].unitCommands[0].mousePosition.x - (*list)[i].UnitShape.getPosition().x >= 0) {
+					angle = atan(((float) currentPos.y - castedPos.y) / (currentPos.x - castedPos.x));
+					(*list)[i].UnitShape.move(cos(angle), sin(angle));
+				} else {
+					angle = atan(((*list)[i].unitCommands[0].mousePosition.y - (*list)[i].UnitShape.getPosition().y) / ((*list)[i].UnitShape.getPosition().x - (*list)[i].unitCommands[0].mousePosition.x));
+					(*list)[i].UnitShape.move(-1 * cos(angle), sin(angle));
+				}
+				if( (castedPos.x > (currentPos.x - 1) && castedPos.x < (currentPos.x + 1)) && (castedPos.y > (currentPos.y - 1) && castedPos.y < (currentPos.y + 1)))
+				{
+					(*list)[i].unitCommands.erase((*list)[i].unitCommands.begin());
+				}
+			}
+		}
+	}
+}
 void gameLogic() {//TODO Gabe remove these comments unless you actually need them
-	
+
 	for (unsigned int i=0; i<3; i++) {
 		s_enemyUnits[i].unitHealthBar.HPupdate(s_enemyUnits[i].UnitShape.getPosition(),&s_enemyUnits[i].HPcurrent);
 	}
+	updateMoveLogic(&s_enemyUnits);
 	for (unsigned int i=0; i<5; i++) {
 		//std::cout << s_playerUnits[i].UnitShape.getPosition().x << "," << s_playerUnits[i].UnitShape.getPosition().y << std::endl;
 		s_playerUnits[i].unitHealthBar.HPupdate(s_playerUnits[i].UnitShape.getPosition(),&s_playerUnits[i].HPcurrent);
@@ -350,17 +372,17 @@ void gameLogic() {//TODO Gabe remove these comments unless you actually need the
 				////sf::Vector2f destinationPos =  s_playerUnits[0].UnitShape.getPosition();
 				sf::Vector2i castedPos(s_playerUnits[i].UnitShape.getPosition().x,s_playerUnits[i].UnitShape.getPosition().y);
 				/*if( (currentPos.x > (castedPos.x - 1) || currentPos.x < (castedPos.x + 1)) && (currentPos.y > (castedPos.y - 1) || currentPos.y < (castedPos.y + 1)))
-					//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
-					s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
+				//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
+				s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
 				} else {
-					angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].UnitShape.getPosition().x - s_playerUnits[i].unitCommands[0].mousePosition.x));
-					//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
-					s_playerUnits[i].UnitShape.move(-1 * cos(angle), sin(angle));
-					//s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
+				angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].UnitShape.getPosition().x - s_playerUnits[i].unitCommands[0].mousePosition.x));
+				//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
+				s_playerUnits[i].UnitShape.move(-1 * cos(angle), sin(angle));
+				//s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
 				}
 				if( (castedPos.x > (currentPos.x - 1) && castedPos.x < (currentPos.x + 1)) && (castedPos.y > (currentPos.y - 1) && castedPos.y < (currentPos.y + 1)))
 				{
-					s_playerUnits[i].unitCommands.erase(s_playerUnits[i].unitCommands.begin());
+				s_playerUnits[i].unitCommands.erase(s_playerUnits[i].unitCommands.begin());
 				}else{*/
 				//s_playerUnits[i].unitCommands.erase(s_playerUnits[i].unitCommands.begin());
 				if (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x >= 0) {
@@ -389,7 +411,7 @@ void gameLogic() {//TODO Gabe remove these comments unless you actually need the
 		}
 	}
 
-	for (int i=0; i<5; i++) {
+	for (int i=0; i<5; i++) {//TODO unhardcode this
 		for (int j=0; j<3; j++) {
 			float dist = std::sqrt(std::pow((s_enemyUnits[j].UnitShape.getPosition().x + s_enemyUnits[j].UnitShape.getRadius()) - (s_playerUnits[i].UnitShape.getPosition().x + s_playerUnits[i].UnitShape.getRadius()), 2) + std::pow((s_enemyUnits[j].UnitShape.getPosition().y + s_enemyUnits[j].UnitShape.getRadius()) - (s_playerUnits[i].UnitShape.getPosition().y + s_playerUnits[i].UnitShape.getRadius()), 2));
 			if (dist < 2 * s_playerUnits[i].UnitShape.getRadius()) {
@@ -465,9 +487,26 @@ int mainGame(){
 	//TODO MAKE Tile constructor
 	//TODO Discuss doing the fallout method of 3d.
 		//Make render, take isometric snapshots of it. Stick to SFML
+	
+	//spawnerFriendly.png
+	//spawnerRed.png
 
-	unitSpawner friendlySpawner = unitSpawner();//TODO finish this
+	std::srand(std::time(nullptr));
+	const Unit friendlyUnitTemplate = Unit(Point2D(0,0),sf::Color::Green,10);
+	const Unit enemyUnitTemplate = Unit(Point2D(0,0),sf::Color::Red,20);
 
+	sf::Texture friendlySpawnerTexture;
+	sf::Texture enemySpawnerTexture;
+	if(!friendlySpawnerTexture.loadFromFile("spawnerFriendly.png")){
+		printf("spawnerFriendly.png load failed.");
+	}
+	if(!enemySpawnerTexture.loadFromFile("spawnerRed.png")){
+		printf("spawnerRed.png.png load failed.");
+	}
+	unitSpawner friendlySpawner = unitSpawner(&s_playerUnits,friendlyUnitTemplate,sf::Vector2i(window.getSize().x/2,500),&friendlySpawnerTexture);
+	unitSpawner enemySpawner = unitSpawner(&s_enemyUnits,enemyUnitTemplate,sf::Vector2i(window.getSize().x/2,100),&enemySpawnerTexture);
+	//TODO finish this
+	
 	sf::RectangleShape rectangle(sf::Vector2f(120, 50));
 	rectangle.setSize(sf::Vector2f(400, 100));
 	rectangle.setPosition(300,300);
@@ -487,12 +526,16 @@ int mainGame(){
 	}
 	//TODO MAKE CLASS FOR GAME UNIT ADDITION TO TILE MANAGER
 	//Give tile int cords or on screen float approximations of the tile.
-	for(unsigned int i=0;i<5;i++){
-		s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,500),sf::Color::Green,10));
-	}
-	for(unsigned int i=0;i<3;i++){
-		s_enemyUnits.push_back(Unit(Point2D((i+1)*150+180,100),sf::Color::Red,20));
-	}
+
+	//for(unsigned int i=0;i<5;i++){
+	//	s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,500),sf::Color::Green,10));
+	//}
+	//for(unsigned int i=0;i<3;i++){
+	//	s_enemyUnits.push_back(Unit(Point2D((i+1)*150+180,100),sf::Color::Red,20));
+	//}
+	friendlySpawner.spawnUnit(5,80);
+	enemySpawner.spawnUnit(3,80);
+
 	//Allows the player to queue up commands.
 	//Non Shifted Commands empty the list.
 	//Same with Unit Selection
@@ -594,6 +637,9 @@ int mainGame(){
 		window.draw(tileSet,&tileSetTexture);
 		window.draw(tileSet,tileSetStates);
 		
+		friendlySpawner.draw(&window);
+		enemySpawner.draw(&window);
+
 		drawSelectionStroke(&c_playerSelection);
 		drawUnitVector(&window,s_playerUnits);
 		drawUnitVector(&window,s_enemyUnits);
@@ -603,7 +649,7 @@ int mainGame(){
 		}
 
 		theFPSCounter.updateFPSCounter();
-		theFPSCounter.draw(&window);
+		theFPSCounter.draw(&window,&screenPos);
         window.display();
 		
     }
