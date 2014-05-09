@@ -17,13 +17,20 @@ eGameState gameState;
 //#define SELECTION_STROKE_COLOR sf::Color::Blue
 //#define STROKE_SIZE 4
 //#define GAMEARRAYSIZE_MOCKUP 128
-//#define TILE_SIZE 32
+//#define TILE_SIZE 
+
+
+
+
+sf::Vector2i screenSize (1024,700);
+
+sf::Vector2i screenPos (0,0);
 
 enum DecisionState {Selecting,Commanding};
  
 sf::RectangleShape c_clientSelectionShape;
 sf::Vector2i c_originalSelectPoint;//SELECT LEFT CLICK POINT
-sf::RenderWindow window(sf::VideoMode(1024, 768), "RTS Mockup");
+sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "RTS Mockup");
 std::vector<Unit> s_playerUnits;
 std::vector<Unit> s_enemyUnits;
 Tile gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];//game level
@@ -45,8 +52,10 @@ void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//
 			(*window).draw(list[i].UnitShape);
 			(*window).draw(list[i].unitHealthBar.HPgreen);
 			(*window).draw(list[i].unitHealthBar.HPred);
+
 		}
 
+	
 	}
 	
 
@@ -140,12 +149,12 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* s_playerUnits,std::vector<Unit
 	int diffX = maxX - minX;
 	int diffY = maxY - minY;
 
-	
+
 	float radius=0.f;
 	for(unsigned int i = 0; i < s_playerUnits->size(); i++){
 		Unit * pUnit = &(*s_playerUnits)[i];
 		radius = pUnit->UnitShape.getRadius();
-	
+
 		if(diffX <=1 && diffY <= 1){
 			sf::Vector2f unitPos = pUnit->UnitShape.getPosition();
 			unitPos.x+= radius;
@@ -155,65 +164,34 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* s_playerUnits,std::vector<Unit
 			if(dist <= pUnit->UnitShape.getRadius()){
 				if(listContainsThisPointer(c_playerSelection,pUnit) == false){
 					c_playerSelection->push_back(pUnit);
-					break;
+					//printf("Original Point %d %d",originalPoint.x,originalPoint.y);
+					//printf("Selection Cords %d %d\n",selectionShape.getPosition().x,selectionShape.getPosition().y);
+				}else if(pUnit->UnitShape.getPosition().x <= (maxX + radius) && pUnit->UnitShape.getPosition().x >= (minX - radius)){
+					if(pUnit->UnitShape.getPosition().y <= (maxY + radius) && pUnit->UnitShape.getPosition().y >= (minY - radius)){
+						if(listContainsThisPointer(c_playerSelection,pUnit) == false){
+							c_playerSelection->push_back(pUnit);
+
+						}
+					}else{
+						if(!shifted && listContainsThisPointer(c_playerSelection,pUnit) == true){
+							c_playerSelection->erase( std::remove(std::begin(*c_playerSelection), std::end(*c_playerSelection), pUnit), std::end(*c_playerSelection));
+						}
+					}
+				}else{
+					if(!shifted && listContainsThisPointer(c_playerSelection,pUnit) == true){
+						c_playerSelection->erase( std::remove(std::begin(*c_playerSelection), std::end(*c_playerSelection), pUnit), std::end(*c_playerSelection));
+					}
 				}
-	//printf("Original Point %d %d",originalPoint.x,originalPoint.y);
-	//printf("Selection Cords %d %d\n",selectionShape.getPosition().x,selectionShape.getPosition().y);
 			}
-		}else if(pUnit->UnitShape.getPosition().x <= (maxX + radius) && pUnit->UnitShape.getPosition().x >= (minX - radius)){
-			if(pUnit->UnitShape.getPosition().y <= (maxY + radius) && pUnit->UnitShape.getPosition().y >= (minY - radius)){
-				if(listContainsThisPointer(c_playerSelection,pUnit) == false){
-					c_playerSelection->push_back(pUnit);
-					
-				}
-			}else{
-				if(!shifted && listContainsThisPointer(c_playerSelection,pUnit) == true){
-					c_playerSelection->erase( std::remove(std::begin(*c_playerSelection), std::end(*c_playerSelection), pUnit), std::end(*c_playerSelection));
-				}
-			}
-		}else{
-			if(!shifted && listContainsThisPointer(c_playerSelection,pUnit) == true){
-				c_playerSelection->erase( std::remove(std::begin(*c_playerSelection), std::end(*c_playerSelection), pUnit), std::end(*c_playerSelection));
-			}
+			printf("\nUnit Count: %d\n",c_playerSelection->size());
 		}
 	}
-	printf("\nUnit Count: %d\n",c_playerSelection->size());
-	//TODO redo this shit right here to fix functionality. Optimizations can be done later.
-	//for(unsigned int unitIterator=0;unitIterator<(*s_playerUnits).size();unitIterator++){//Iterate through all units
-	//	Unit * currentPointer=NULL;
-	//	bool containsThePointer = false;
-	//	if(shifted==true){//If user is adding, check if current unit is on the list already
-	//		currentPointer =&(*s_playerUnits)[unitIterator];
-	//		for(unsigned int j=0;j<(*c_playerSelection).size();j++){//iterate through unit selection vector
-	//			if(currentPointer==(*c_playerSelection)[j]){
-	//				containsThePointer=true;
-	//				if(c_clientSelectionShape.getSize().x ==0 && c_clientSelectionShape.getSize().y ==0){
-	//					if(sqrt(std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().x-c_clientSelectionShape.getPosition().x,2.0f)+std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().y-c_clientSelectionShape.getPosition().y,2.0f))<=(*s_playerUnits)[unitIterator].UnitShape.getRadius()){
-	//						(*c_playerSelection).erase((*c_playerSelection).begin()+j);
-	//						unitIterator=(*s_playerUnits).size()+1;//fix the reselection
-	//					}
-	//				}
-	//				break;
-	//			}
-	//		}
-	//	}
-	//	if(containsThePointer==false){//if this element isn't in the list
-	//		if(c_clientSelectionShape.getSize().x ==0 && c_clientSelectionShape.getSize().y ==0){
-	//			if(sqrt(std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().x-c_clientSelectionShape.getPosition().x,2.0f)+std::pow((*s_playerUnits)[unitIterator].UnitShape.getRadius()+(*s_playerUnits)[unitIterator].UnitShape.getPosition().y-c_clientSelectionShape.getPosition().y,2.0f))<=(*s_playerUnits)[unitIterator].UnitShape.getRadius()){
-	//				(*c_playerSelection).push_back(&(*s_playerUnits)[unitIterator]);
-	//			}
-	//		}else{
-	//			radius=(*s_playerUnits)[unitIterator].UnitShape.getRadius()/2;
-	//			sf::Vector2f position((*s_playerUnits)[unitIterator].position.x,(*s_playerUnits)[unitIterator].position.y);
-	//			if(position.x >= minX && position.x <= maxX){
-	//				if(position.y >= minY && position.y <= maxY){
-	//					(*c_playerSelection).push_back(&(*s_playerUnits)[unitIterator]);
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
+	//Merge successfull but the translation of the view must be incorporated
+	//TODO FIX SELECTION
+	//UNDO THIS to demonstrate
+	//c_playerSelection->push_back(&(*s_playerUnits)[0]);
 }
+
 char * commandString(CommandEnum theCommand){
 	switch(theCommand){
 	case Attack:
@@ -366,6 +344,15 @@ void gameLogic() {
 				////sf::Vector2f destinationPos =  s_playerUnits[0].UnitShape.getPosition();
 				sf::Vector2i castedPos(s_playerUnits[i].UnitShape.getPosition().x,s_playerUnits[i].UnitShape.getPosition().y);
 				/*if( (currentPos.x > (castedPos.x - 1) || currentPos.x < (castedPos.x + 1)) && (currentPos.y > (castedPos.y - 1) || currentPos.y < (castedPos.y + 1)))
+					//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
+					s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
+				} else {
+					angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].UnitShape.getPosition().x - s_playerUnits[i].unitCommands[0].mousePosition.x));
+					//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
+					s_playerUnits[i].UnitShape.move(-1 * cos(angle), sin(angle));
+					//s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
+				}
+				if( (castedPos.x > (currentPos.x - 1) && castedPos.x < (currentPos.x + 1)) && (castedPos.y > (currentPos.y - 1) && castedPos.y < (currentPos.y + 1)))
 				{
 					s_playerUnits[i].unitCommands.erase(s_playerUnits[i].unitCommands.begin());
 				}else{*/
@@ -408,23 +395,51 @@ void gameLogic() {
 }
 void menu()
 {
-	//TODO populate this
-	//TODO implement GUI classes
-		//Buttons
-		//Sliders
-}
-int mainGame()
-{
-	//TODO add save games
-		//I think boost serialization should let us do that or we're gonna have to roll our own
-			//Could just make a zip/tar of folders full of text files.
-	//TODO add Z indexing abstract class.
-	sf::Sprite testSprite;
-	//TODO make cell attack beam animations. Make them orion lazer esque
-	//TODO Make mouse logic diagram
-	//TODO detail std::vector usage in Unit.unitCommands as a stack turned into a queue.
-		//we "push" things onto it and then consume the first on element as if it were a stack
 
+	sf::RectangleShape rectangle(sf::Vector2f(120, 50));
+	rectangle.setSize(sf::Vector2f(400, 100));
+	rectangle.setPosition(300,300);
+	rectangle.setFillColor(sf::Color::Magenta);
+
+	sf::Texture texture;
+
+	if(!texture.loadFromFile("MainMenu.png"))
+	{
+		printf("error loading picture\n");
+	}
+
+	sf::Sprite sprite;
+	sprite.setTexture(texture);
+
+	while (window.isOpen())
+    {
+        // check all the window's events that were triggered since the last iteration of the loop
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+			sf::Vector2i point = sf::Mouse::getPosition(window);
+
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+				if(point.x>=380&&point.x<=633)
+				{
+					if(point.y>=325&&point.y<=415)
+					{
+						gameState=GSM_LEVEL;
+						break;
+					}
+				}
+			}
+
+        window.clear(sf::Color::Black);
+		window.draw(rectangle);
+		window.draw(sprite);
+        window.display();
+    }
+}
+int mainGame(){
 	//Cheat protection:
 	//Encrypt packets
 	//or use Base64 and obsfuscate
@@ -506,6 +521,8 @@ int mainGame()
 	//printf("\nGame Tile Count: X: %d Y: %d\n",tileViewSizeX,tileViewSizeY);
 	sf::VertexArray tileSet(sf::Quads,4*tileViewSizeX*tileViewSizeY);//http://www.sfml-dev.org/tutorials/2.1/graphics-vertex-array.php
 	sf::RenderStates tileSetStates;
+	sf::View view;
+	fpsCounter myFps;
 	tileSetStates.blendMode=sf::BlendNone;
 	tileSetStates.texture = &tileSetTexture;
 
@@ -535,6 +552,30 @@ int mainGame()
 		mouseLogic();
 		gameLogic();
         window.clear();
+		float delta = myFps.getDelta();
+		
+		if(sf::Mouse::getPosition(window).x > screenSize.x)
+		{
+			screenPos.x += 10*delta;
+		}
+		else if(sf::Mouse::getPosition(window).x < 0)
+		{
+			screenPos.x -=10*delta;
+		}
+		if(sf::Mouse::getPosition(window).y > screenSize.y)
+		{
+			screenPos.y +=10*delta;
+		}
+		else if(sf::Mouse::getPosition(window).y < 0)
+		{
+			screenPos.y -=10*delta;
+		}
+		
+
+		view.reset(sf::FloatRect(screenPos.x,screenPos.y,screenSize.x,screenSize.y));
+
+		window.setView(view);
+		std::cout << screenPos.x << " " << screenPos.y << std::endl;
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
 		window.draw(background);
@@ -560,7 +601,7 @@ int mainGame()
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	gameState = GSM_LEVEL;
+	gameState = GSM_MENU;
 
 	while(gameState != GSM_END){
 		switch (gameState)

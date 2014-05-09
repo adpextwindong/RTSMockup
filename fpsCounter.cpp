@@ -14,6 +14,10 @@ fpsCounter::fpsCounter(const sf::Font& font){
 	fps=0;
 	fpsUpdateCounter.restart().asSeconds();
 }
+float fpsCounter::getDelta()
+{
+	return myClock.restart().asSeconds()*100;
+}
 void fpsCounter::draw(sf::RenderWindow* window){
 	(*window).draw(fpsCounterText);
 }
