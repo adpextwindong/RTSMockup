@@ -8,7 +8,7 @@ public:
 	fpsCounter(void);
 	fpsCounter(const sf::Font& font);
 	~fpsCounter(void);
-	void fpsCounter::draw(sf::RenderWindow* window);
+	void fpsCounter::draw(sf::RenderWindow* window,sf::Vector2i * screenPos);
 	float getDelta(void);
 	void updateFPSCounter(void);
 	void getFPSText(void);

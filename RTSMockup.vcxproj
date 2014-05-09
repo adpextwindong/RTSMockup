@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Command.h" />
+    <ClInclude Include="controlPoint.h" />
     <ClInclude Include="fpsCounter.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Macros.h" />
@@ -94,6 +95,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Command.cpp" />
+    <ClCompile Include="controlPoint.cpp" />
     <ClCompile Include="fpsCounter.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="Point2D.cpp" />

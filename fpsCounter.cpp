@@ -18,11 +18,12 @@ float fpsCounter::getDelta()
 {
 	return myClock.restart().asSeconds()*100;
 }
-void fpsCounter::draw(sf::RenderWindow* window){
+void fpsCounter::draw(sf::RenderWindow* window,sf::Vector2i * screenPos){
+	fpsCounterText.setPosition(sf::Vector2f(*screenPos));
 	(*window).draw(fpsCounterText);
 }
 void fpsCounter::updateFPSCounter(void){
-	fps=(int)(1/myClock.restart().asSeconds());
+	fps =(int)(1/myClock.restart().asSeconds());
 	//printf("\n%d\n",fps);
 	fpsCounterText.setString(std::to_string(fps));
 	if(fpsUpdateCounter.getElapsedTime().asSeconds()>FPS_COUNTER_UPDATE_TIME){

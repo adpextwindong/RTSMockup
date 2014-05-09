@@ -353,73 +353,30 @@ void updateMoveLogic(std::vector<Unit> * list){
 		}
 	}
 }
-void gameLogic() {//TODO Gabe remove these comments unless you actually need them
-
-	for (unsigned int i=0; i<3; i++) {
+void updateHealthBars(std::vector<Unit> * list){
+	for (unsigned int i=0; i<list->size(); i++) {
 		s_enemyUnits[i].unitHealthBar.HPupdate(s_enemyUnits[i].UnitShape.getPosition(),&s_enemyUnits[i].HPcurrent);
 	}
-	updateMoveLogic(&s_enemyUnits);
-	for (unsigned int i=0; i<5; i++) {
-		//std::cout << s_playerUnits[i].UnitShape.getPosition().x << "," << s_playerUnits[i].UnitShape.getPosition().y << std::endl;
-		s_playerUnits[i].unitHealthBar.HPupdate(s_playerUnits[i].UnitShape.getPosition(),&s_playerUnits[i].HPcurrent);
-
-
-		if (s_playerUnits[i].unitCommands.size()!=0) {
-			if (s_playerUnits[i].unitCommands[0].theCommand == Move) {
-				//double angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) - (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
-				double angle = 0;
-				sf::Vector2i currentPos = s_playerUnits[i].unitCommands[0].mousePosition;
-				////sf::Vector2f destinationPos =  s_playerUnits[0].UnitShape.getPosition();
-				sf::Vector2i castedPos(s_playerUnits[i].UnitShape.getPosition().x,s_playerUnits[i].UnitShape.getPosition().y);
-				/*if( (currentPos.x > (castedPos.x - 1) || currentPos.x < (castedPos.x + 1)) && (currentPos.y > (castedPos.y - 1) || currentPos.y < (castedPos.y + 1)))
-				//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
-				s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
-				} else {
-				angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].UnitShape.getPosition().x - s_playerUnits[i].unitCommands[0].mousePosition.x));
-				//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
-				s_playerUnits[i].UnitShape.move(-1 * cos(angle), sin(angle));
-				//s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
-				}
-				if( (castedPos.x > (currentPos.x - 1) && castedPos.x < (currentPos.x + 1)) && (castedPos.y > (currentPos.y - 1) && castedPos.y < (currentPos.y + 1)))
-				{
-				s_playerUnits[i].unitCommands.erase(s_playerUnits[i].unitCommands.begin());
-				}else{*/
-				//s_playerUnits[i].unitCommands.erase(s_playerUnits[i].unitCommands.begin());
-				if (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x >= 0) {
-					angle = atan(((float) currentPos.y - castedPos.y) / (currentPos.x - castedPos.x));
-					//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
-					s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
-				} else {
-					angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].UnitShape.getPosition().x - s_playerUnits[i].unitCommands[0].mousePosition.x));
-					//angle = atan((s_playerUnits[i].unitCommands[0].mousePosition.y - s_playerUnits[i].UnitShape.getPosition().y) / (s_playerUnits[i].unitCommands[0].mousePosition.x - s_playerUnits[i].UnitShape.getPosition().x));
-					s_playerUnits[i].UnitShape.move(-1 * cos(angle), sin(angle));
-					//s_playerUnits[i].UnitShape.move(cos(angle), sin(angle));
-				}
-				if( (castedPos.x > (currentPos.x - 1) && castedPos.x < (currentPos.x + 1)) && (castedPos.y > (currentPos.y - 1) && castedPos.y < (currentPos.y + 1)))
-				{
-					s_playerUnits[i].unitCommands.erase(s_playerUnits[i].unitCommands.begin());
-				}
-				//s_playerUnits[i].UnitShape.move(sf::Mouse::getPosition(window).x - s_playerUnits[i].UnitShape.getPosition().x, sf::Mouse::getPosition(window).y - s_playerUnits[i].UnitShape.getPosition().y);
-				//std::cout << angle << std::endl;
-
-				//}
-				//tan^-1((y_mouse - y_unit) / (x_mouse - x_unit))
-				//x_unit = x_unit + 10cos(angle)
-				//y_unit = y_unit + 10cos(angle)
-			}
-
-		}
-	}
-
-	for (int i=0; i<5; i++) {//TODO unhardcode this
-		for (int j=0; j<3; j++) {
+}
+void doPlayerDamage(void){
+	for(unsigned int i = 0; i < s_playerUnits.size(); i++){
+		for(unsigned int j = 0; j < s_enemyUnits.size(); j++){
 			float dist = std::sqrt(std::pow((s_enemyUnits[j].UnitShape.getPosition().x + s_enemyUnits[j].UnitShape.getRadius()) - (s_playerUnits[i].UnitShape.getPosition().x + s_playerUnits[i].UnitShape.getRadius()), 2) + std::pow((s_enemyUnits[j].UnitShape.getPosition().y + s_enemyUnits[j].UnitShape.getRadius()) - (s_playerUnits[i].UnitShape.getPosition().y + s_playerUnits[i].UnitShape.getRadius()), 2));
 			if (dist < 2 * s_playerUnits[i].UnitShape.getRadius()) {
 				s_enemyUnits[j].HPcurrent = s_enemyUnits[j].HPcurrent - 1;
-				//std::cout << (&s_enemyUnits[j].HPcurrent == s_enemyUnits[j].unitHealthBar.HPcurrent) << std::endl;
 			}
 		}
 	}
+}
+void gameLogic() {
+	updateMoveLogic(&s_enemyUnits);
+	updateMoveLogic(&s_playerUnits);
+	
+	doPlayerDamage();
+
+	updateHealthBars(&s_enemyUnits);
+	updateHealthBars(&s_playerUnits);
+
 }
 void menu()
 {
@@ -533,8 +490,8 @@ int mainGame(){
 	//for(unsigned int i=0;i<3;i++){
 	//	s_enemyUnits.push_back(Unit(Point2D((i+1)*150+180,100),sf::Color::Red,20));
 	//}
-	friendlySpawner.spawnUnit(5,80);
-	enemySpawner.spawnUnit(3,80);
+	friendlySpawner.spawnUnit(10,80);
+	enemySpawner.spawnUnit(10,80);
 
 	//Allows the player to queue up commands.
 	//Non Shifted Commands empty the list.
@@ -591,7 +548,7 @@ int mainGame(){
 		return -1;
 	}
 	fpsCounter theFPSCounter(fontArial);
-
+	sf::Sprite * pSprite;
     while (window.isOpen())
     {
         // check all the window's events that were triggered since the last iteration of the loop
@@ -627,7 +584,7 @@ int mainGame(){
 		view.reset(tempRect);
 		sf::Vector2f test = view.getCenter();
 		//printf("\nTranslation Cords:%f,%f\n",test.x,test.y);
-		printf("\nUnit 0 Cord:%f,%f",s_playerUnits[0].UnitShape.getPosition().x,s_playerUnits[0].UnitShape.getPosition().y);
+		//printf("\nUnit 0 Cord:%f,%f",s_playerUnits[0].UnitShape.getPosition().x,s_playerUnits[0].UnitShape.getPosition().y);
 		window.setView(view);
 		//std::cout << screenPos.x << " " << screenPos.y << std::endl;
 
