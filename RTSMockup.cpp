@@ -590,7 +590,15 @@ int mainGame(){
 	if(!fontArial.loadFromFile("arial.ttf")){
 		return -1;
 	}
+
 	fpsCounter theFPSCounter(fontArial);
+
+	sf::Texture bgTexture;
+	if(!bgTexture.loadFromFile("bodyBGsmall.png")){
+		printf("failed to load background");
+	}
+	sf::Sprite bgSprite;
+	bgSprite.setTexture(bgTexture);
 
     while (window.isOpen())
     {
@@ -627,19 +635,20 @@ int mainGame(){
 		view.reset(tempRect);
 		sf::Vector2f test = view.getCenter();
 		//printf("\nTranslation Cords:%f,%f\n",test.x,test.y);
-		printf("\nUnit 0 Cord:%f,%f",s_playerUnits[0].UnitShape.getPosition().x,s_playerUnits[0].UnitShape.getPosition().y);
+		//printf("\nUnit 0 Cord:%f,%f",s_playerUnits[0].UnitShape.getPosition().x,s_playerUnits[0].UnitShape.getPosition().y);
 		window.setView(view);
 		//std::cout << screenPos.x << " " << screenPos.y << std::endl;
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
-		window.draw(background);
+		window.draw(bgSprite);
 
-		window.draw(tileSet,&tileSetTexture);
-		window.draw(tileSet,tileSetStates);
+		//window.draw(tileSet,&tileSetTexture);
+		//window.draw(tileSet,tileSetStates);
 		
 		friendlySpawner.draw(&window);
 		enemySpawner.draw(&window);
 
+		//window.draw(background);
 		drawSelectionStroke(&c_playerSelection);
 		drawUnitVector(&window,s_playerUnits);
 		drawUnitVector(&window,s_enemyUnits);
@@ -649,7 +658,7 @@ int mainGame(){
 		}
 
 		theFPSCounter.updateFPSCounter();
-		theFPSCounter.draw(&window,&screenPos);
+		theFPSCounter.draw(&window);
         window.display();
 		
     }
