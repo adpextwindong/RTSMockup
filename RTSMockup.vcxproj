@@ -87,6 +87,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Unit.h" />
+    <ClInclude Include="unitSpawner.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aStarTestMain.cpp">
@@ -103,6 +104,7 @@
     </ClCompile>
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Unit.cpp" />
+    <ClCompile Include="unitSpawner.cpp" />
     <ClCompile Include="vertexArrayMainTest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>

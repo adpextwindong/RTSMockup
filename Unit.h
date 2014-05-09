@@ -18,7 +18,7 @@ class Unit
 		sf::Color Color;
 		sf::CircleShape UnitShape;// unit sprite
 		std::vector<Command> unitCommands;//queue for Players Commands
-		std::vector<std::vector<Unit>*> listsThisUnitIsIn;//List of all the lists this unit is in
+		//std::vector<std::vector<Unit>*> listsThisUnitIsIn;//List of all the lists this unit is in
 			//Used pointers to this Unit on death are removed
 
 		Unit::Unit(Point2D _Posistion,sf::Color color,double size);

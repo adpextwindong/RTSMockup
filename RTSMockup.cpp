@@ -11,6 +11,8 @@
 #include "fpsCounter.h"//FPS Counter
 #include "iostream"
 
+#include "unitSpawner.h"
+
 enum eGameState {GSM_MENU, GSM_LEVEL, GSM_END};
 eGameState gameState;
 //#define PLAYER_COLOR Color::Green
@@ -19,9 +21,7 @@ eGameState gameState;
 //#define GAMEARRAYSIZE_MOCKUP 128
 //#define TILE_SIZE 
 
-
-
-
+sf::View view;
 sf::Vector2i screenSize (1024,700);
 
 sf::Vector2i screenPos (0,0);
@@ -34,8 +34,6 @@ sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "RTS Mockup")
 std::vector<Unit> s_playerUnits;
 std::vector<Unit> s_enemyUnits;
 Tile gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];//game level
-
-
 
 //Mouse Selection & Commanding
 std::vector<Unit *> c_playerSelection;
@@ -63,20 +61,22 @@ void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//
 
 void updateSelection(){
 	sf::Vector2i LimitedMousePos = sf::Mouse::getPosition(window);
-	if(LimitedMousePos.x<0 || LimitedMousePos.x > window.getSize().x){//if 
-		if(LimitedMousePos.x<0){
-			LimitedMousePos.x=0;
-		}else{
-			LimitedMousePos.x=window.getSize().x;
-		}
-	}
-	if(LimitedMousePos.y<0 || LimitedMousePos.y > window.getSize().y){//if 
-		if(LimitedMousePos.y<0){
-			LimitedMousePos.y=0;
-		}else{
-			LimitedMousePos.y=window.getSize().y;
-		}
-	}
+	LimitedMousePos.x += screenPos.x;
+	LimitedMousePos.y += screenPos.y;
+	//if(LimitedMousePos.x<0 || LimitedMousePos.x > window.getSize().x){//if 
+	//	if(LimitedMousePos.x<0){
+	//		LimitedMousePos.x=0;
+	//	}else{
+	//		LimitedMousePos.x=window.getSize().x;
+	//	}
+	//}
+	//if(LimitedMousePos.y<0 || LimitedMousePos.y > window.getSize().y){//if 
+	//	if(LimitedMousePos.y<0){
+	//		LimitedMousePos.y=0;
+	//	}else{
+	//		LimitedMousePos.y=window.getSize().y;
+	//	}
+	//}
 	int yDiff=(LimitedMousePos.y-c_originalSelectPoint.y);
 	if((LimitedMousePos.x-c_originalSelectPoint.x)<=0){//Xdiff +x
 		if(yDiff<=0){//+x +y Quad 1
@@ -155,38 +155,40 @@ void grabOnScreenSelectedUnits(std::vector<Unit>* s_playerUnits,std::vector<Unit
 		Unit * pUnit = &(*s_playerUnits)[i];
 		radius = pUnit->UnitShape.getRadius();
 
-		if(diffX <=1 && diffY <= 1){
+		
 			sf::Vector2f unitPos = pUnit->UnitShape.getPosition();
 			unitPos.x+= radius;
 			unitPos.y+= radius;
 			float dist = getDist(unitPos, c_clientSelectionShape.getPosition());
-			printf("\n%f\n",dist);
-			if(dist <= pUnit->UnitShape.getRadius()){
-				if(listContainsThisPointer(c_playerSelection,pUnit) == false){
-					c_playerSelection->push_back(pUnit);
-					//printf("Original Point %d %d",originalPoint.x,originalPoint.y);
-					//printf("Selection Cords %d %d\n",selectionShape.getPosition().x,selectionShape.getPosition().y);
-				}else if(pUnit->UnitShape.getPosition().x <= (maxX + radius) && pUnit->UnitShape.getPosition().x >= (minX - radius)){
-					if(pUnit->UnitShape.getPosition().y <= (maxY + radius) && pUnit->UnitShape.getPosition().y >= (minY - radius)){
-						if(listContainsThisPointer(c_playerSelection,pUnit) == false){
-							c_playerSelection->push_back(pUnit);
+			//printf("\n%f\n",dist);
+			if(diffX <=1 && diffY <= 1){
+				if(dist <= pUnit->UnitShape.getRadius()){
+					if(listContainsThisPointer(c_playerSelection,pUnit) == false){
+						c_playerSelection->push_back(pUnit);
+						break;
+						//printf("Original Point %d %d",originalPoint.x,originalPoint.y);
+						//printf("Selection Cords %d %d\n",selectionShape.getPosition().x,selectionShape.getPosition().y);
+					}
+				}
+			}else if(pUnit->UnitShape.getPosition().x <= (maxX + radius) && pUnit->UnitShape.getPosition().x >= (minX - radius)){
+				if(pUnit->UnitShape.getPosition().y <= (maxY + radius) && pUnit->UnitShape.getPosition().y >= (minY - radius)){
+					if(listContainsThisPointer(c_playerSelection,pUnit) == false){
+						c_playerSelection->push_back(pUnit);
 
-						}
-					}else{
-						if(!shifted && listContainsThisPointer(c_playerSelection,pUnit) == true){
-							c_playerSelection->erase( std::remove(std::begin(*c_playerSelection), std::end(*c_playerSelection), pUnit), std::end(*c_playerSelection));
-						}
 					}
 				}else{
 					if(!shifted && listContainsThisPointer(c_playerSelection,pUnit) == true){
 						c_playerSelection->erase( std::remove(std::begin(*c_playerSelection), std::end(*c_playerSelection), pUnit), std::end(*c_playerSelection));
 					}
 				}
+			}else{
+				if(!shifted && listContainsThisPointer(c_playerSelection,pUnit) == true){
+					c_playerSelection->erase( std::remove(std::begin(*c_playerSelection), std::end(*c_playerSelection), pUnit), std::end(*c_playerSelection));
+				}
 			}
-			printf("\nUnit Count: %d\n",c_playerSelection->size());
 		}
-	}
-	//Merge successfull but the translation of the view must be incorporated
+		printf("\nUnit Count: %d\n",c_playerSelection->size());
+	//Translation of the view must be incorporated
 	//TODO FIX SELECTION
 	//UNDO THIS to demonstrate
 	//c_playerSelection->push_back(&(*s_playerUnits)[0]);
@@ -218,7 +220,16 @@ void CommandSelectionUnits(CommandEnum theCommand, std::vector<Unit *> * c_playe
 			}else{
 				printf("Shifted %S Command",commandString(theCommand));
 			}
-			Command tempComand(Command(Move,sf::Mouse::getPosition(window),unitAtMousePos()));
+			sf::Vector2i tempMousePos = sf::Mouse::getPosition(window);
+			tempMousePos.x += screenPos.x;//TODO make translation mouse cord
+			tempMousePos.y += screenPos.y;
+			if(tempMousePos.x < 0){
+				tempMousePos.x = 1;
+			}
+			if(tempMousePos.y < 0){
+				tempMousePos.y = 1;
+			}
+			Command tempComand(Command(Move,tempMousePos,unitAtMousePos()));
 			(*(*c_playerSelection)[i]).unitCommands.push_back(tempComand);
 		}
 	}else{
@@ -239,7 +250,7 @@ bool mouseIsOnScreen(){
 }
 void drawSelectionStroke(std::vector<Unit*>* c_playerSelection){
 	sf::CircleShape strokeShape(0.f);
-	strokeShape.setFillColor(SELECTION_STROKE_COLOR);
+	strokeShape.setFillColor(sf::Color::Blue);
 	//printf(" %d\n",(*c_playerSelection).size());
 	for(unsigned int i=0;i<(*c_playerSelection).size();i++){
 		strokeShape.setRadius((*(*c_playerSelection)[i]).UnitShape.getRadius()+STROKE_SIZE);
@@ -277,13 +288,6 @@ void setQuadTexture(sf::Vertex * quad,const unsigned int i,const unsigned int j)
 		//printf("\n");
 	//}
 }
-//void drawLevel(){ DEPRECATED FOR VERTEX ARRAY
-//	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
-//		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
-//			window.draw(gameLevel[i][j].tileSprite);
-//		}
-//	}
-//}
 void mouseLogic(){
 		//IF MOUSE IS ON THE WINDOW
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)^leftMouseClickedLastCycle) {//if Left Mouse Button state has changed since last cycle
@@ -306,6 +310,8 @@ void mouseLogic(){
 					case Selecting:
 						c_clientSelectionShape.setSize(sf::Vector2f(0,0));
 						c_originalSelectPoint=sf::Mouse::getPosition(window);
+						c_originalSelectPoint.x += screenPos.x;
+						c_originalSelectPoint.y += screenPos.y;
 						updateSelection();
 						selectionDrawState=true;
 						break;
@@ -326,7 +332,7 @@ void mouseLogic(){
 		}
 }
 
-void gameLogic() {
+void gameLogic() {//TODO Gabe remove these comments unless you actually need them
 	
 	for (unsigned int i=0; i<3; i++) {
 		s_enemyUnits[i].unitHealthBar.HPupdate(s_enemyUnits[i].UnitShape.getPosition(),&s_enemyUnits[i].HPcurrent);
@@ -388,7 +394,7 @@ void gameLogic() {
 			float dist = std::sqrt(std::pow((s_enemyUnits[j].UnitShape.getPosition().x + s_enemyUnits[j].UnitShape.getRadius()) - (s_playerUnits[i].UnitShape.getPosition().x + s_playerUnits[i].UnitShape.getRadius()), 2) + std::pow((s_enemyUnits[j].UnitShape.getPosition().y + s_enemyUnits[j].UnitShape.getRadius()) - (s_playerUnits[i].UnitShape.getPosition().y + s_playerUnits[i].UnitShape.getRadius()), 2));
 			if (dist < 2 * s_playerUnits[i].UnitShape.getRadius()) {
 				s_enemyUnits[j].HPcurrent = s_enemyUnits[j].HPcurrent - 1;
-				std::cout << (&s_enemyUnits[j].HPcurrent == s_enemyUnits[j].unitHealthBar.HPcurrent) << std::endl;
+				//std::cout << (&s_enemyUnits[j].HPcurrent == s_enemyUnits[j].unitHealthBar.HPcurrent) << std::endl;
 			}
 		}
 	}
@@ -459,6 +465,9 @@ int mainGame(){
 	//TODO MAKE Tile constructor
 	//TODO Discuss doing the fallout method of 3d.
 		//Make render, take isometric snapshots of it. Stick to SFML
+
+	unitSpawner friendlySpawner = unitSpawner();//TODO finish this
+
 	sf::RectangleShape rectangle(sf::Vector2f(120, 50));
 	rectangle.setSize(sf::Vector2f(400, 100));
 	rectangle.setPosition(300,300);
@@ -479,7 +488,7 @@ int mainGame(){
 	//TODO MAKE CLASS FOR GAME UNIT ADDITION TO TILE MANAGER
 	//Give tile int cords or on screen float approximations of the tile.
 	for(unsigned int i=0;i<5;i++){
-		s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,668),sf::Color::Green,10));
+		s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,500),sf::Color::Green,10));
 	}
 	for(unsigned int i=0;i<3;i++){
 		s_enemyUnits.push_back(Unit(Point2D((i+1)*150+180,100),sf::Color::Red,20));
@@ -521,7 +530,7 @@ int mainGame(){
 	//printf("\nGame Tile Count: X: %d Y: %d\n",tileViewSizeX,tileViewSizeY);
 	sf::VertexArray tileSet(sf::Quads,4*tileViewSizeX*tileViewSizeY);//http://www.sfml-dev.org/tutorials/2.1/graphics-vertex-array.php
 	sf::RenderStates tileSetStates;
-	sf::View view;
+	
 	fpsCounter myFps;
 	tileSetStates.blendMode=sf::BlendNone;
 	tileSetStates.texture = &tileSetTexture;
@@ -571,11 +580,13 @@ int mainGame(){
 			screenPos.y -=10*delta;
 		}
 		
-
-		view.reset(sf::FloatRect(screenPos.x,screenPos.y,screenSize.x,screenSize.y));
-
+		sf::FloatRect tempRect = sf::FloatRect(screenPos.x,screenPos.y,screenSize.x,screenSize.y);
+		view.reset(tempRect);
+		sf::Vector2f test = view.getCenter();
+		//printf("\nTranslation Cords:%f,%f\n",test.x,test.y);
+		printf("\nUnit 0 Cord:%f,%f",s_playerUnits[0].UnitShape.getPosition().x,s_playerUnits[0].UnitShape.getPosition().y);
 		window.setView(view);
-		std::cout << screenPos.x << " " << screenPos.y << std::endl;
+		//std::cout << screenPos.x << " " << screenPos.y << std::endl;
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
 		window.draw(background);
