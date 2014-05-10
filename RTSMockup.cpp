@@ -12,6 +12,7 @@
 #include "iostream"
 #include "controlPoint.h"
 #include "unitSpawner.h"
+#include <SFML/Audio.hpp>
 
 enum eGameState {GSM_MENU, GSM_LEVEL, GSM_END};
 eGameState gameState;
@@ -375,10 +376,11 @@ void updateOrganHealthBars(void){
 	}
 }
 void doPlayerDamage(void){
+#define ATTACK_RANGE_MACRO 5
 	for(unsigned int i = 0; i < s_playerUnits.size(); i++){
 		for(unsigned int j = 0; j < s_enemyUnits.size(); j++){
 			float dist = std::sqrt(std::pow((s_enemyUnits[j].UnitShape.getPosition().x + s_enemyUnits[j].UnitShape.getRadius()) - (s_playerUnits[i].UnitShape.getPosition().x + s_playerUnits[i].UnitShape.getRadius()), 2) + std::pow((s_enemyUnits[j].UnitShape.getPosition().y + s_enemyUnits[j].UnitShape.getRadius()) - (s_playerUnits[i].UnitShape.getPosition().y + s_playerUnits[i].UnitShape.getRadius()), 2));
-			if (dist < 2 * s_playerUnits[i].UnitShape.getRadius()) {
+			if (dist < ATTACK_RANGE_MACRO * s_playerUnits[i].UnitShape.getRadius()) {
 				s_enemyUnits[j].HPcurrent = s_enemyUnits[j].HPcurrent - 1;
 			}
 		}
@@ -469,6 +471,9 @@ int mainGame(){
 	//sf::Sprite testSprite;
 	//testSprite.setPosition(20,20);
 	//testSprite.setTexture(lungLeft);
+
+	sf::Music music;
+	music.openFromFile("rtsGame.wav");
 
 
 	printf("Texture Max Size: %d",sf::Texture().getMaximumSize());
@@ -567,6 +572,9 @@ int mainGame(){
 		return -1;
 	}
 	fpsCounter theFPSCounter(fontArial);
+
+	music.play();
+
     while (window.isOpen())
     {
         // check all the window's events that were triggered since the last iteration of the loop
