@@ -360,9 +360,18 @@ void updateMoveLogic(std::vector<Unit> * list){
 		}
 	}
 }
-void updateHealthBars(std::vector<Unit> * list){
+void updateUnitHealthBars(std::vector<Unit> * list){
 	for (unsigned int i=0; i<list->size(); i++) {
 		s_enemyUnits[i].unitHealthBar.HPupdate(s_enemyUnits[i].UnitShape.getPosition(),&s_enemyUnits[i].HPcurrent);
+	}
+}
+void updateOrganHealthBars(void){
+	for ( unsigned int i = 0; i < s_playerOrgans.size(); i++){
+		sf::Vector2f pos = s_playerOrgans[i].cpSprite.getPosition();
+		const sf::Texture * pTexture = s_playerOrgans[i].cpSprite.getTexture();
+		pos.x += pTexture->getSize().x;
+		pos.y += pTexture->getSize().y;
+		s_playerOrgans[i].cpHealthBar.HPupdate(pos,&s_playerOrgans[i].HPcurrent);
 	}
 }
 void doPlayerDamage(void){
@@ -381,8 +390,9 @@ void gameLogic() {
 	
 	doPlayerDamage();
 
-	updateHealthBars(&s_enemyUnits);
-	updateHealthBars(&s_playerUnits);
+	updateUnitHealthBars(&s_enemyUnits);
+	updateUnitHealthBars(&s_playerUnits);
+	updateOrganHealthBars();
 
 }
 void menu()
@@ -455,13 +465,10 @@ int mainGame(){
 	
 	//spawnerFriendly.png
 	//spawnerRed.png
-	sf::Texture lungLeft;
-	if(!lungLeft.loadFromFile("lungSpriteLeft.png")){
-		printf("lungSpriteLeft.png load fail");
-	}
-	sf::Sprite testSprite;
+
+	//sf::Sprite testSprite;
 	//testSprite.setPosition(20,20);
-	testSprite.setTexture(lungLeft);
+	//testSprite.setTexture(lungLeft);
 
 
 	printf("Texture Max Size: %d",sf::Texture().getMaximumSize());
@@ -494,8 +501,16 @@ int mainGame(){
 			//gameLevel[i][j].tileSprite.setPosition(sf::Vector2f(i*32,j*32));
 		}
 	}
-	s_playerOrgans.push_back(controlPoint(&lungLeft,sf::Vector2f(100,100)));
-	s_playerOrgans[0].cpSprite;
+	sf::Texture lungLeft;
+	sf::Texture lungRight;
+	if(!lungLeft.loadFromFile("lungSpriteLeft.png")){
+		printf("lungSpriteLeft.png load fail");
+	}
+	if(!lungRight.loadFromFile("lungSpriteRight.png")){
+		printf("lungSpriteRight.png load fail");
+	}
+	s_playerOrgans.push_back(controlPoint(&lungLeft,sf::Vector2f(300,300)));
+	s_playerOrgans.push_back(controlPoint(&lungRight,sf::Vector2f(700,100)));
 
 	//Allows the player to queue up commands.
 	//Non Shifted Commands empty the list.
@@ -597,21 +612,17 @@ int mainGame(){
 
 		window.draw(tileSet,&tileSetTexture);
 		window.draw(tileSet,tileSetStates);
-		//
+
 		friendlySpawner.draw(&window);
 		enemySpawner.draw(&window);
 
 		drawSelectionStroke(&c_playerSelection);
 		drawUnitVector(s_playerUnits);
 		drawUnitVector(s_enemyUnits);
-		//
-	
 
-		//
-
-		//if(selectionDrawState==true){
-		//	window.draw(c_clientSelectionShape);
-		//}
+		if(selectionDrawState==true){
+			window.draw(c_clientSelectionShape);
+		}
 		//window.draw(testSprite);
 
 		drawOrganVector(s_playerOrgans);
