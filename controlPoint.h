@@ -8,6 +8,6 @@ public:
 	int HPcurrent;
 	HealthBar cpHealthBar;
 	sf::Sprite cpSprite;
-	controlPoint(sf::Texture * spriteTexture);
+	controlPoint(sf::Texture * spriteTexture,sf::Vector2f position);
 	~controlPoint(void);
 };

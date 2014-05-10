@@ -4,11 +4,9 @@
 class HealthBar
 {
 public:
-	HealthBar(int *, int *, sf::CircleShape *);
+	HealthBar::HealthBar(int *_HPmax, int *_HPcurrent);
 	HealthBar(void);
 	~HealthBar(void);
-
-	sf::CircleShape * pShape;
 
 	int *HPmax;
 	int *HPcurrent;

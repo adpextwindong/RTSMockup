@@ -3,11 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include "iostream"
 
-HealthBar::HealthBar(int *pointer1, int *pointer2, sf::CircleShape * pShape1)
+HealthBar::HealthBar(int *_HPmax, int *_HPcurrent)
 {
-	HPmax = pointer1;
-	HPcurrent = pointer2;
-	pShape = pShape1;
+	HPmax = _HPmax;
+	HPcurrent = _HPcurrent;
 	printf("HPcurrent = %d",*HPcurrent);
 	HPred.setSize(sf::Vector2f(50,10));
 	HPgreen.setSize(sf::Vector2f(50,10));

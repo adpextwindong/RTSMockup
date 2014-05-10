@@ -10,7 +10,7 @@
 #include "Macros.h"//Macros TODO Make config system
 #include "fpsCounter.h"//FPS Counter
 #include "iostream"
-
+#include "controlPoint.h"
 #include "unitSpawner.h"
 
 enum eGameState {GSM_MENU, GSM_LEVEL, GSM_END};
@@ -31,8 +31,11 @@ enum DecisionState {Selecting,Commanding};
 sf::RectangleShape c_clientSelectionShape;
 sf::Vector2i c_originalSelectPoint;//SELECT LEFT CLICK POINT
 sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "RTS Mockup");
+
 std::vector<Unit> s_playerUnits;
 std::vector<Unit> s_enemyUnits;
+std::vector<controlPoint> s_playerOrgans;
+
 Tile gameLevel[GAMEARRAYSIZE_MOCKUP][GAMEARRAYSIZE_MOCKUP];//game level
 
 //Mouse Selection & Commanding
@@ -44,19 +47,23 @@ bool rightMouseClickedLastCycle;
 DecisionState mouseCommandState;
 bool selectionDrawState;
 
-void drawUnitVector(sf::RenderWindow * window, const std::vector<Unit>& list){//draws all the units in a unit list
+void drawUnitVector(const std::vector<Unit>& list){//draws all the units in a unit list
 	for(unsigned int i=0;i<list.size();i++) {
 		if (list[i].HPcurrent >= 0) {
-			(*window).draw(list[i].UnitShape);
-			(*window).draw(list[i].unitHealthBar.HPgreen);
-			(*window).draw(list[i].unitHealthBar.HPred);
-
+			window.draw(list[i].UnitShape);
+			window.draw(list[i].unitHealthBar.HPgreen);
+			window.draw(list[i].unitHealthBar.HPred);
 		}
-
-	
 	}
-	
-
+}
+void drawOrganVector(const std::vector<controlPoint>& list){
+	for(unsigned int i = 0; i < list.size();i++){//TODO learn for every in vector loops
+		if (list[i].cpHealthBar.HPcurrent >= 0) {
+			window.draw(list[i].cpSprite);
+			window.draw(list[i].cpHealthBar.HPgreen);
+			window.draw(list[i].cpHealthBar.HPred);
+		}
+	}
 }
 
 void updateSelection(){
@@ -381,6 +388,7 @@ void gameLogic() {
 void menu()
 {
 
+
 	sf::RectangleShape rectangle(sf::Vector2f(120, 50));
 	rectangle.setSize(sf::Vector2f(400, 100));
 	rectangle.setPosition(300,300);
@@ -447,8 +455,21 @@ int mainGame(){
 	
 	//spawnerFriendly.png
 	//spawnerRed.png
+	sf::Texture lungLeft;
+	if(!lungLeft.loadFromFile("lungSpriteLeft.png")){
+		printf("lungSpriteLeft.png load fail");
+	}
+	sf::Sprite testSprite;
+	//testSprite.setPosition(20,20);
+	testSprite.setTexture(lungLeft);
+
+
+	printf("Texture Max Size: %d",sf::Texture().getMaximumSize());
+	sf::ContextSettings c_settings;
+	c_settings.antialiasingLevel=8;
 
 	std::srand(std::time(nullptr));
+
 	const Unit friendlyUnitTemplate = Unit(Point2D(0,0),sf::Color::Green,10);
 	const Unit enemyUnitTemplate = Unit(Point2D(0,0),sf::Color::Red,20);
 
@@ -460,20 +481,12 @@ int mainGame(){
 	if(!enemySpawnerTexture.loadFromFile("spawnerRed.png")){
 		printf("spawnerRed.png.png load failed.");
 	}
+
 	unitSpawner friendlySpawner = unitSpawner(&s_playerUnits,friendlyUnitTemplate,sf::Vector2i(window.getSize().x/2,500),&friendlySpawnerTexture);
 	unitSpawner enemySpawner = unitSpawner(&s_enemyUnits,enemyUnitTemplate,sf::Vector2i(window.getSize().x/2,100),&enemySpawnerTexture);
-	//TODO finish this
-	
-	sf::RectangleShape rectangle(sf::Vector2f(120, 50));
-	rectangle.setSize(sf::Vector2f(400, 100));
-	rectangle.setPosition(300,300);
-	rectangle.setFillColor(sf::Color::Magenta);
+	friendlySpawner.spawnUnit(10,80);
+	enemySpawner.spawnUnit(10,80);
 
-	printf("Texture Max Size: %d",sf::Texture().getMaximumSize());
-	sf::ContextSettings c_settings;
-	c_settings.antialiasingLevel=8;
-	
-	std::srand(time(NULL));
 	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
 		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
 			gameLevel[i][j]=Tile(std::rand()%2+0);
@@ -481,17 +494,8 @@ int mainGame(){
 			//gameLevel[i][j].tileSprite.setPosition(sf::Vector2f(i*32,j*32));
 		}
 	}
-	//TODO MAKE CLASS FOR GAME UNIT ADDITION TO TILE MANAGER
-	//Give tile int cords or on screen float approximations of the tile.
-
-	//for(unsigned int i=0;i<5;i++){
-	//	s_playerUnits.push_back(Unit(Point2D((i+1)*150+50,500),sf::Color::Green,10));
-	//}
-	//for(unsigned int i=0;i<3;i++){
-	//	s_enemyUnits.push_back(Unit(Point2D((i+1)*150+180,100),sf::Color::Red,20));
-	//}
-	friendlySpawner.spawnUnit(10,80);
-	enemySpawner.spawnUnit(10,80);
+	s_playerOrgans.push_back(controlPoint(&lungLeft,sf::Vector2f(100,100)));
+	s_playerOrgans[0].cpSprite;
 
 	//Allows the player to queue up commands.
 	//Non Shifted Commands empty the list.
@@ -548,7 +552,6 @@ int mainGame(){
 		return -1;
 	}
 	fpsCounter theFPSCounter(fontArial);
-	sf::Sprite * pSprite;
     while (window.isOpen())
     {
         // check all the window's events that were triggered since the last iteration of the loop
@@ -589,24 +592,34 @@ int mainGame(){
 		//std::cout << screenPos.x << " " << screenPos.y << std::endl;
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
+
 		window.draw(background);
 
 		window.draw(tileSet,&tileSetTexture);
 		window.draw(tileSet,tileSetStates);
-		
+		//
 		friendlySpawner.draw(&window);
 		enemySpawner.draw(&window);
 
 		drawSelectionStroke(&c_playerSelection);
-		drawUnitVector(&window,s_playerUnits);
-		drawUnitVector(&window,s_enemyUnits);
+		drawUnitVector(s_playerUnits);
+		drawUnitVector(s_enemyUnits);
+		//
+	
 
-		if(selectionDrawState==true){
-			window.draw(c_clientSelectionShape);
-		}
+		//
+
+		//if(selectionDrawState==true){
+		//	window.draw(c_clientSelectionShape);
+		//}
+		//window.draw(testSprite);
+
+		drawOrganVector(s_playerOrgans);
 
 		theFPSCounter.updateFPSCounter();
 		theFPSCounter.draw(&window,&screenPos);
+	
+		window.draw(s_playerOrgans[0].cpSprite);
         window.display();
 		
     }
