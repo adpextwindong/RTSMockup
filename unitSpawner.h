@@ -14,3 +14,4 @@ public:
 	~unitSpawner(void);
 };
 
+int giveRand(unsigned int absRange);

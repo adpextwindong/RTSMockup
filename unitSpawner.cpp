@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "unitSpawner.h"
-
+#include "Macros.h"
+#include "Math.h"
 
 	unitSpawner::unitSpawner(std::vector<Unit> * _teamUnitList,Unit _unitTemplate,sf::Vector2i _position,sf::Texture * _spawnerText):
 	teamUnitList(_teamUnitList),
@@ -10,13 +11,14 @@
 	spawnerSprite.setTexture(*_spawnerText);
 	spawnerSprite.setPosition(position);
 }
+
+void unitSpawner::draw(sf::RenderWindow * win){
+	win->draw(spawnerSprite);
+}
 int giveRand(unsigned int absRange){
 	int num = std::rand()%(absRange+1);
 	int sign = std::rand()%2 == 0 ? -1 : 1;
 	return sign * num;
-}
-void unitSpawner::draw(sf::RenderWindow * win){
-	win->draw(spawnerSprite);
 }
 void unitSpawner::spawnUnit(unsigned int num,unsigned spreadRange){
 	for(unsigned int i = 0; i<num;i++){

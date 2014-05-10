@@ -5,6 +5,7 @@
 
 HealthBar::HealthBar(int *_HPmax, int *_HPcurrent)
 {
+	converted = false;
 	HPmax = _HPmax;
 	HPcurrent = _HPcurrent;
 	printf("HPcurrent = %d",*HPcurrent);

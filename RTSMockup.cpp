@@ -12,6 +12,7 @@
 #include "iostream"
 #include "controlPoint.h"
 #include "unitSpawner.h"
+#include "Math.h"
 
 enum eGameState {GSM_MENU, GSM_LEVEL, GSM_END};
 eGameState gameState;
@@ -23,8 +24,12 @@ eGameState gameState;
 
 sf::View view;
 sf::Vector2i screenSize (1024,700);
-
 sf::Vector2i screenPos (0,0);
+
+sf::Clock spawnClock;
+
+const Unit friendlyUnitTemplate = Unit(Point2D(0,0),sf::Color::Green,10);
+const Unit enemyUnitTemplate = Unit(Point2D(0,0),sf::Color::Red,20);
 
 enum DecisionState {Selecting,Commanding};
  
@@ -70,20 +75,6 @@ void updateSelection(){
 	sf::Vector2i LimitedMousePos = sf::Mouse::getPosition(window);
 	LimitedMousePos.x += screenPos.x;
 	LimitedMousePos.y += screenPos.y;
-	//if(LimitedMousePos.x<0 || LimitedMousePos.x > window.getSize().x){//if 
-	//	if(LimitedMousePos.x<0){
-	//		LimitedMousePos.x=0;
-	//	}else{
-	//		LimitedMousePos.x=window.getSize().x;
-	//	}
-	//}
-	//if(LimitedMousePos.y<0 || LimitedMousePos.y > window.getSize().y){//if 
-	//	if(LimitedMousePos.y<0){
-	//		LimitedMousePos.y=0;
-	//	}else{
-	//		LimitedMousePos.y=window.getSize().y;
-	//	}
-	//}
 	int yDiff=(LimitedMousePos.y-c_originalSelectPoint.y);
 	if((LimitedMousePos.x-c_originalSelectPoint.x)<=0){//Xdiff +x
 		if(yDiff<=0){//+x +y Quad 1
@@ -240,7 +231,7 @@ void CommandSelectionUnits(CommandEnum theCommand, std::vector<Unit *> * c_playe
 			(*(*c_playerSelection)[i]).unitCommands.push_back(tempComand);
 		}
 	}else{
-		printf("No...\n");
+		//TODO implement attack command for enemy units
 	}
 }
 
@@ -338,31 +329,63 @@ void mouseLogic(){
 					updateSelection();
 		}
 }
-void updateMoveLogic(std::vector<Unit> * list){
+
+void updateMoveLogic(std::vector<Unit> * list, bool enemy,std::vector<controlPoint> & s_playerOrgans){
 	for(unsigned int i = 0; i < list->size(); i++){
-		if ((*list)[i].unitCommands.size()!=0) {//TODO make this a function 
-			if ((*list)[i].unitCommands[0].theCommand == Move) {
+		if(!enemy){//friendly
+			if ((*list)[i].unitCommands.size()!=0) {//TODO make this a function 
+				if ((*list)[i].unitCommands[0].theCommand == Move) {
+					double angle = 0;
+					sf::Vector2i destination = (*list)[i].unitCommands[0].mousePosition;
+					sf::Vector2i currentPos((*list)[i].UnitShape.getPosition().x,(*list)[i].UnitShape.getPosition().y);
+					if ((*list)[i].unitCommands[0].mousePosition.x - (*list)[i].UnitShape.getPosition().x >= 0) {
+						angle = atan(((float) destination.y - currentPos.y) / (destination.x - currentPos.x));
+					
+						(*list)[i].UnitShape.move(cos(angle), sin(angle));
+					} else {
+						angle = atan(((*list)[i].unitCommands[0].mousePosition.y - (*list)[i].UnitShape.getPosition().y) / ((*list)[i].UnitShape.getPosition().x - (*list)[i].unitCommands[0].mousePosition.x));
+						(*list)[i].UnitShape.move(-1 * cos(angle), sin(angle));
+					}
+					if( (currentPos.x > (destination.x - 1) && currentPos.x < (destination.x + 1)) && (currentPos.y > (destination.y - 1) && currentPos.y < (destination.y + 1)))
+					{
+						(*list)[i].unitCommands.erase((*list)[i].unitCommands.begin());
+					}
+				}
+			}
+		}else{//enemy unit
+			//if((*list)[i].unitCommands.size()==0) {//TODO make this a function 
 				double angle = 0;
-				sf::Vector2i currentPos = (*list)[i].unitCommands[0].mousePosition;
-				sf::Vector2i castedPos((*list)[i].UnitShape.getPosition().x,(*list)[i].UnitShape.getPosition().y);
+				unsigned int randNum = std::rand()%s_playerOrgans.size();
+				if(randNum > s_playerOrgans.size()){
+					printf("You should never be here.");
+				}
+				const sf::Texture * pTexture = s_playerOrgans[randNum].cpSprite.getTexture();
+				
+				sf::Vector2f destination = s_playerOrgans[randNum].cpSprite.getPosition();
+				destination.x += pTexture->getSize().x * (giveRand(100)/100);
+				destination.y += pTexture->getSize().y * (giveRand(100)/100);
+
+				sf::Vector2f currentPos((*list)[i].UnitShape.getPosition().x,(*list)[i].UnitShape.getPosition().y);
 				if ((*list)[i].unitCommands[0].mousePosition.x - (*list)[i].UnitShape.getPosition().x >= 0) {
-					angle = atan(((float) currentPos.y - castedPos.y) / (currentPos.x - castedPos.x));
+					angle = atan(((float) destination.y - currentPos.y) / (destination.x - currentPos.x));
+
 					(*list)[i].UnitShape.move(cos(angle), sin(angle));
 				} else {
 					angle = atan(((*list)[i].unitCommands[0].mousePosition.y - (*list)[i].UnitShape.getPosition().y) / ((*list)[i].UnitShape.getPosition().x - (*list)[i].unitCommands[0].mousePosition.x));
 					(*list)[i].UnitShape.move(-1 * cos(angle), sin(angle));
 				}
-				if( (castedPos.x > (currentPos.x - 1) && castedPos.x < (currentPos.x + 1)) && (castedPos.y > (currentPos.y - 1) && castedPos.y < (currentPos.y + 1)))
+				if( (currentPos.x > (destination.x - 1) && currentPos.x < (destination.x + 1)) && (currentPos.y > (destination.y - 1) && currentPos.y < (destination.y + 1)))
 				{
 					(*list)[i].unitCommands.erase((*list)[i].unitCommands.begin());
+					(*list)[i].unitCommands.push_back(Command(Attack,sf::Vector2i(destination),nullptr));
 				}
-			}
+			//}
 		}
 	}
 }
 void updateUnitHealthBars(std::vector<Unit> * list){
-	for (unsigned int i=0; i<list->size(); i++) {
-		s_enemyUnits[i].unitHealthBar.HPupdate(s_enemyUnits[i].UnitShape.getPosition(),&s_enemyUnits[i].HPcurrent);
+	for (unsigned int i=0; i< list->size(); i++) {
+		(*list)[i].unitHealthBar.HPupdate((*list)[i].UnitShape.getPosition(),&(*list)[i].HPcurrent);
 	}
 }
 void updateOrganHealthBars(void){
@@ -384,9 +407,15 @@ void doPlayerDamage(void){
 		}
 	}
 }
-void gameLogic() {
-	updateMoveLogic(&s_enemyUnits);
-	updateMoveLogic(&s_playerUnits);
+void gameLogic(unitSpawner & playerSpawner, unitSpawner & enemySpawner,std::vector<controlPoint> & s_playerOrgans) {
+	
+	if(spawnClock.getElapsedTime().asSeconds() >= SPAWN_TIME){
+		playerSpawner.spawnUnit(FRIENDLY_UNITS_PER_SPAWN,FRIENDLY_SPAWN_RANGE);
+		enemySpawner.spawnUnit(FRIENDLY_UNITS_PER_SPAWN,FRIENDLY_SPAWN_RANGE);
+		spawnClock.restart();
+	}
+	updateMoveLogic(&s_enemyUnits, true,s_playerOrgans);
+	updateMoveLogic(&s_playerUnits, false,s_playerOrgans);
 	
 	doPlayerDamage();
 
@@ -442,6 +471,25 @@ void menu()
         window.display();
     }
 }
+void moveScreen(float delta){
+		if(sf::Mouse::getPosition(window).x > screenSize.x)
+		{
+			screenPos.x += 10*delta;
+		}
+		else if(sf::Mouse::getPosition(window).x < 0)
+		{
+			screenPos.x -=10*delta;
+		}
+		if(sf::Mouse::getPosition(window).y > screenSize.y)
+		{
+			screenPos.y +=10*delta;
+		}
+		else if(sf::Mouse::getPosition(window).y < 0)
+		{
+			screenPos.y -=10*delta;
+		}
+		
+}
 int mainGame(){
 	//Cheat protection:
 	//Encrypt packets
@@ -477,22 +525,28 @@ int mainGame(){
 
 	std::srand(std::time(nullptr));
 
-	const Unit friendlyUnitTemplate = Unit(Point2D(0,0),sf::Color::Green,10);
-	const Unit enemyUnitTemplate = Unit(Point2D(0,0),sf::Color::Red,20);
 
-	sf::Texture friendlySpawnerTexture;
+
+	sf::Texture playerSpawnerTexture;
 	sf::Texture enemySpawnerTexture;
-	if(!friendlySpawnerTexture.loadFromFile("spawnerFriendly.png")){
+	if(!playerSpawnerTexture.loadFromFile("spawnerFriendly.png")){
 		printf("spawnerFriendly.png load failed.");
 	}
 	if(!enemySpawnerTexture.loadFromFile("spawnerRed.png")){
 		printf("spawnerRed.png.png load failed.");
 	}
+	//const Unit friendlyUnitTemplate = Unit(Point2D(0,0),sf::Color::Green,10);
+	//const Unit enemyUnitTemplate = Unit(Point2D(0,0),sf::Color::Red,20);
 
-	unitSpawner friendlySpawner = unitSpawner(&s_playerUnits,friendlyUnitTemplate,sf::Vector2i(window.getSize().x/2,500),&friendlySpawnerTexture);
+	
+	unitSpawner playerSpawner = unitSpawner(&s_playerUnits,friendlyUnitTemplate,sf::Vector2i(window.getSize().x/2,500),&playerSpawnerTexture);
 	unitSpawner enemySpawner = unitSpawner(&s_enemyUnits,enemyUnitTemplate,sf::Vector2i(window.getSize().x/2,100),&enemySpawnerTexture);
-	friendlySpawner.spawnUnit(10,80);
-	enemySpawner.spawnUnit(10,80);
+
+
+
+	//INITIAL SPAWNER
+	playerSpawner.spawnUnit(1,80);
+	enemySpawner.spawnUnit(1,80);
 
 	for(unsigned int i=0;i<GAMEARRAYSIZE_MOCKUP;i++){
 		for(unsigned int j=0;j<GAMEARRAYSIZE_MOCKUP;j++){
@@ -503,15 +557,19 @@ int mainGame(){
 	}
 	sf::Texture lungLeft;
 	sf::Texture lungRight;
+	sf::Texture heart;
 	if(!lungLeft.loadFromFile("lungSpriteLeft.png")){
 		printf("lungSpriteLeft.png load fail");
 	}
 	if(!lungRight.loadFromFile("lungSpriteRight.png")){
 		printf("lungSpriteRight.png load fail");
 	}
+	if(!heart.loadFromFile("smallheart.png")){
+		printf("smallheart.png load fail");
+	}
 	s_playerOrgans.push_back(controlPoint(&lungLeft,sf::Vector2f(300,300)));
 	s_playerOrgans.push_back(controlPoint(&lungRight,sf::Vector2f(700,100)));
-
+	s_playerOrgans.push_back(controlPoint(&heart,sf::Vector2f(400,200)));
 	//Allows the player to queue up commands.
 	//Non Shifted Commands empty the list.
 	//Same with Unit Selection
@@ -567,6 +625,7 @@ int mainGame(){
 		return -1;
 	}
 	fpsCounter theFPSCounter(fontArial);
+	spawnClock.restart();
     while (window.isOpen())
     {
         // check all the window's events that were triggered since the last iteration of the loop
@@ -577,27 +636,12 @@ int mainGame(){
                 window.close();
         }
 		mouseLogic();
-		gameLogic();
+		gameLogic(playerSpawner,enemySpawner,s_playerOrgans);//I honestly don't know how to make these two args more global
         window.clear();
 		float delta = myFps.getDelta();
 		
-		if(sf::Mouse::getPosition(window).x > screenSize.x)
-		{
-			screenPos.x += 10*delta;
-		}
-		else if(sf::Mouse::getPosition(window).x < 0)
-		{
-			screenPos.x -=10*delta;
-		}
-		if(sf::Mouse::getPosition(window).y > screenSize.y)
-		{
-			screenPos.y +=10*delta;
-		}
-		else if(sf::Mouse::getPosition(window).y < 0)
-		{
-			screenPos.y -=10*delta;
-		}
-		
+		//moveScreen(delta);
+
 		sf::FloatRect tempRect = sf::FloatRect(screenPos.x,screenPos.y,screenSize.x,screenSize.y);
 		view.reset(tempRect);
 		sf::Vector2f test = view.getCenter();
@@ -613,24 +657,26 @@ int mainGame(){
 		window.draw(tileSet,&tileSetTexture);
 		window.draw(tileSet,tileSetStates);
 
-		friendlySpawner.draw(&window);
+		drawOrganVector(s_playerOrgans);
+
+		playerSpawner.draw(&window);
 		enemySpawner.draw(&window);
 
 		drawSelectionStroke(&c_playerSelection);
 		drawUnitVector(s_playerUnits);
 		drawUnitVector(s_enemyUnits);
 
-		if(selectionDrawState==true){
+		if(selectionDrawState == true){
 			window.draw(c_clientSelectionShape);
 		}
 		//window.draw(testSprite);
 
-		drawOrganVector(s_playerOrgans);
+		
 
 		theFPSCounter.updateFPSCounter();
 		theFPSCounter.draw(&window,&screenPos);
 	
-		window.draw(s_playerOrgans[0].cpSprite);
+		//window.draw(s_playerOrgans[0].cpSprite);
         window.display();
 		
     }

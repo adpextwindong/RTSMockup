@@ -10,7 +10,7 @@ public:
 
 	int *HPmax;
 	int *HPcurrent;
-
+	bool converted;
 	sf::RectangleShape HPgreen;
 	sf::RectangleShape HPred;
 	void HealthBar::HPupdate(sf::Vector2f position,int *);
