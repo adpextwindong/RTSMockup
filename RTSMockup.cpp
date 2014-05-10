@@ -572,7 +572,11 @@ int mainGame(){
 		return -1;
 	}
 	fpsCounter theFPSCounter(fontArial);
-
+	sf::Texture gabeBackground;
+	if(!gabeBackground.loadFromFile("bodyBGsmall.png")){
+		printf("load failure");
+	}
+	sf::Sprite bgSprite(gabeBackground);
 	music.play();
 
     while (window.isOpen())
@@ -620,6 +624,8 @@ int mainGame(){
 
 		window.draw(tileSet,&tileSetTexture);
 		window.draw(tileSet,tileSetStates);
+
+		window.draw(bgSprite);
 
 		friendlySpawner.draw(&window);
 		enemySpawner.draw(&window);
