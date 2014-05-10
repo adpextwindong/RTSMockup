@@ -508,15 +508,21 @@ int mainGame(){
 	}
 	sf::Texture lungLeft;
 	sf::Texture lungRight;
+	sf::Texture heart;
 	if(!lungLeft.loadFromFile("lungSpriteLeft.png")){
 		printf("lungSpriteLeft.png load fail");
 	}
 	if(!lungRight.loadFromFile("lungSpriteRight.png")){
 		printf("lungSpriteRight.png load fail");
 	}
+	if(!heart.loadFromFile("smallheart.png")){
+		printf("heart load fail");
+	}
+
+
 	s_playerOrgans.push_back(controlPoint(&lungLeft,sf::Vector2f(300,300)));
 	s_playerOrgans.push_back(controlPoint(&lungRight,sf::Vector2f(700,100)));
-
+	s_playerOrgans.push_back(controlPoint(&heart,sf::Vector2f(500,300)));
 	//Allows the player to queue up commands.
 	//Non Shifted Commands empty the list.
 	//Same with Unit Selection
@@ -630,6 +636,8 @@ int mainGame(){
 		friendlySpawner.draw(&window);
 		enemySpawner.draw(&window);
 
+		drawOrganVector(s_playerOrgans);
+
 		drawSelectionStroke(&c_playerSelection);
 		drawUnitVector(s_playerUnits);
 		drawUnitVector(s_enemyUnits);
@@ -639,7 +647,7 @@ int mainGame(){
 		}
 		//window.draw(testSprite);
 
-		drawOrganVector(s_playerOrgans);
+
 
 		theFPSCounter.updateFPSCounter();
 		theFPSCounter.draw(&window,&screenPos);
