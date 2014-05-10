@@ -574,6 +574,13 @@ int mainGame(){
 	//Non Shifted Commands empty the list.
 	//Same with Unit Selection
 
+	sf::Texture bgTexture;
+	if(!bgTexture.loadFromFile("bodyBGsmall.png")){
+		printf("failed to load background");
+	}
+	sf::Sprite bgSprite;
+	bgSprite.setTexture(bgTexture);
+
 	mouseCommandState = Selecting; //True if valid command key is pressed.
 	leftMouseClickedLastCycle = false; //For box selection
 	rightMouseClickedLastCycle = false;
@@ -652,10 +659,11 @@ int mainGame(){
 
 		//printf("%s",selectionDrawState?"TRUE\n":"FALSE\n");
 
-		window.draw(background);
+		//window.draw(background);
+		window.draw(bgSprite);
 
-		window.draw(tileSet,&tileSetTexture);
-		window.draw(tileSet,tileSetStates);
+		//window.draw(tileSet,&tileSetTexture);
+		//window.draw(tileSet,tileSetStates);
 
 		drawOrganVector(s_playerOrgans);
 
